@@ -25,7 +25,7 @@ services:
 
   back:
     build:
-      context: ./
+      context: ./back/
       dockerfile: Dockerfile.back
     container_name: back-sso
     tty: true
