@@ -3,25 +3,25 @@ networks:
   default:
 
 services:
-  front:
-    build:
-      context: ./
-      dockerfile: Dockerfile.front
-      target: prod
-    container_name: front-sso
-    tty: true
-    restart: always
-    networks:
-      - default
-    ports:
-      - 8079:80
-    healthcheck:
-      test: exit $$( curl -so /dev/null --fail http://127.0.0.1:80 && echo 0 || echo 1 )
-      interval: 30s
-      timeout: 1s
-      retries: 1
-    volumes:
-      - ./front/prod/:/app
+#   front:
+#     build:
+#       context: ./
+#       dockerfile: Dockerfile.front
+#       target: prod
+#     container_name: front-sso
+#     tty: true
+#     restart: always
+#     networks:
+#       - default
+#     ports:
+#       - 8079:80
+#     healthcheck:
+#       test: exit $$( curl -so /dev/null --fail http://127.0.0.1:80 && echo 0 || echo 1 )
+#       interval: 30s
+#       timeout: 1s
+#       retries: 1
+#     volumes:
+#       - ./front/prod/:/app
 
   back:
     build:
