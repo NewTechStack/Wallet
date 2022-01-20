@@ -42,7 +42,7 @@ class Account:
     def token_balance(self, account_addr, contract_addr):
         contract_addr = w3.toChecksumAddress(contract_addr)
         account_addr = w3.toChecksumAddress(account_addr)
-         minABI = [
+        minABI = [
           {
             "constant": True,
             "inputs":[{"name":"_owner","type":"address"}],
