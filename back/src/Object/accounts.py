@@ -19,7 +19,7 @@ class Account:
     def create(self, name):
         if usr_id == "-1":
             return [False, "", 400]
-        acct, mnem = w3.eth.account.create_with_mnemonic()
+        acct, mnem = self.w3.eth.account.create_with_mnemonic()
         data = {
                 "usr_id": self.usr_id,
                 "address": str(acct.address),
@@ -36,12 +36,12 @@ class Account:
         return [True, {'wallets': wallets}, None]
 
     def balance(self, account_addr):
-        account_addr = w3.toChecksumAddress(account_addr)
+        account_addr = self.w3.toChecksumAddress(account_addr)
         return [True, {'data': web3.eth.get_balance(str(addr))}, None]
 
     def token_balance(self, account_addr, contract_addr):
-        contract_addr = w3.toChecksumAddress(contract_addr)
-        account_addr = w3.toChecksumAddress(account_addr)
+        contract_addr = self.w3.toChecksumAddress(contract_addr)
+        account_addr = self.w3.toChecksumAddress(account_addr)
         minABI = [
           {
             "constant": True,
@@ -58,9 +58,9 @@ class Account:
             "type":"function"
           }
         ];
-        contract = w3.eth.contract(contract_addr, abi=minABI)
+        contract = self.w3.eth.contract(contract_addr, abi=minABI)
         balance = contract.functions.balanceOf(account_addr).call()
         return [True, {contract_addr: balance}, None]
 
     def __is_connected(self):
-        return w3.isConnected()
+        return self.w3.isConnected()

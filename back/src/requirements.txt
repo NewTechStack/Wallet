@@ -14,3 +14,4 @@ phonenumbers==8.12.12
 Werkzeug
 tqdm
 tinydb
+web3
