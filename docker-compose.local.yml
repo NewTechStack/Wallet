@@ -27,7 +27,7 @@ services:
     build:
       context: ./back/
       dockerfile: Dockerfile.back
-    container_name: back-sso
+    container_name: back-wallet
     tty: true
     restart: always
     networks:
@@ -44,7 +44,7 @@ services:
 
   rethink:
     image: rethinkdb:latest
-    container_name: rethink-sso
+    container_name: rethink-wallet
     restart: always
     ports:
       - 8084:8080
