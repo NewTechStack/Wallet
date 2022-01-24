@@ -1,7 +1,7 @@
 import time
 from rethinkdb import RethinkDB
 
-dbs = {"wallet": ["accounts"]}
+dbs = {"wallet": ["accounts", "contracts"]}
 
 def init():
     red = RethinkDB()
