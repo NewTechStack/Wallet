@@ -67,8 +67,9 @@ class Account:
             return [False, "Invalid wallet ID - user correspondance checksumAddress", 404]
         balance = self.w3.eth.get_balance(str(account_addr))
         return [True, {'data': balance}, None]
+
     def nft_balance(self, account_addr, contract_addr):
-        simplified_abi = [
+        minABI = [
           {
           'inputs': [{'internalType': 'address', 'name': 'owner', 'type': 'address'}],
           'name': 'balanceOf',
