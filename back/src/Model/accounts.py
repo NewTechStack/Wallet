@@ -1,5 +1,6 @@
 from Controller.basic import check
 from Object.accounts import Account
+from Object.contracts import *
 
 def account_load(cn, nextc):
     usr_id = None
@@ -31,12 +32,46 @@ def account_balance(cn, nextc):
     err = cn.private["account"].balance(cn.rt["wallet"])
     return cn.call_next(nextc, err)
 
-def account_balance_token(cn, nextc):
-    err = check.contain(cn.rt, ["wallet"])
-    if not err[0]:
-        return cn.toret.add_error(err[1], err[2])
+def contract_type(cn, nextc):
     err = check.contain(cn.rt, ["contract"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
-    err = cn.private["account"].token_balance(cn.rt["wallet"], cn.rt["contract"])
+    contracts = {
+        "ERC20": Erc20,
+        "Erc721": Erc721
+    }
+    if cn.rt['contract'] not in contracts:
+        return cn.toret.add_error('Invalid contract type', 400)
+    contract_type = contracts[cn.rt['contract']]
+    contract_address = cn.rt[cn.rt['contract']] if cn.rt['contract'] in cn.rt else ''
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.private['contract'] = contract_type(contract_address)
+    cn.private['contract'].connect()
+    err = [True, {}, None]
+    return cn.call_next(nextc, err)
+
+def contract_get_function(cn, nextc):
+    err = cn.private['contract'].get_functions()
+    return cn.call_next(nextc, err)
+
+def contract_exec_constructor(cn, nextc):
+    err = check.contain(cn.pr, ["kwargs"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    err = cn.private['contract'].deploy(cn.pr["kwargs"])
+    return cn.call_next(nextc, err)
+
+def contract_get_constructor(cn, nextc):
+    err = cn.private['contract'].get_constructor()
+    return cn.call_next(nextc, err)
+
+def contract_exec_function(cn, nextc):
+    contract_type = contracts[cn.rt['contract']]
+    contract_address = cn.rt[cn.rt['contract']] if cn.rt['contract'] in cn.rt else None
+    name = cn.rt[contract_address] if contract_address is not None else cn.rt[contract_type]
+    err = check.contain(cn.pr, ["kwargs"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    err = cn.private['contract'].exec_function(name, cn.pr["kwargs"])
     return cn.call_next(nextc, err)
