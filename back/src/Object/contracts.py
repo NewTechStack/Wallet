@@ -7,7 +7,7 @@ import json
 mnemonic = str(os.getenv('MNEMONIC', ''))
 
 class W3:
-    def __init__(self, network_type = 'polygon', network = 'testnet'):
+    def __init__(self, network_type = 'ether', network = 'testnet'):
         self.networks = {
             "polygon": {
                 "mainnet": "https://polygon-rpc.com",
@@ -17,7 +17,7 @@ class W3:
                 "testnet": "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
             }
         }
-        self.network_type = 'polygon' if network_type == None else network_type
+        self.network_type = 'ether' if network_type == None else network_type
         self.network = 'testnet' if network == None else network
         self.link = Web3()
 
@@ -40,7 +40,7 @@ class W3:
     def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 0):
         gas_cost = transaction.estimateGas()
         gas_cost = gas_cost + additionnal_gas
-        gas_price = self.link.toWei(10, 'gwei')
+        gas_price = self.link.toWei(150, 'gwei')
         ether_cost = self.link.fromWei(gas_price * gas_cost, 'ether')
         build = transaction.buildTransaction({
           'gas': gas_cost,
@@ -49,8 +49,9 @@ class W3:
         })
         signed_txn = self.link.eth.account.signTransaction(build, private_key=owner_key)
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
-        self.link.eth.waitForTransactionReceipt(txn)
-        return [True, {"transact": txn, "cost": ether_cost}, None]
+        txn_receipt = self.link.eth.waitForTransactionReceipt(txn)
+        txn_receipt: self.hextojson(txn_receipt)
+        return [True, {"transact": txn, "cost": ether_cost, 'return': txn_receipt}, None]
 
     def hextojson(self, data):
         class HexJsonEncoder(json.JSONEncoder):

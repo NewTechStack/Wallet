@@ -38,7 +38,7 @@ def contract_type(cn, nextc):
         return cn.toret.add_error(err[1], err[2])
     contracts = {
         "ERC20": Erc20,
-        "Erc721": Erc721
+        "ERC721": Erc721
     }
     if cn.rt['contract'] not in contracts:
         return cn.toret.add_error('Invalid contract type', 400)
