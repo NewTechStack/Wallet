@@ -99,15 +99,13 @@ class Contract(W3):
         for function in functions:
             if function['name'] == name:
                 keep_function = function
-        print(keep_function)
         for elem in keep_function['inputs']:
-            print(elem)
             name = elem['name']
             type = elem['type']
             if name not in kwargs:
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(self.address, abi=self.abi)
-        transaction = contract.find_functions_by_name(name)(**kwargs)
+        transaction = contract.get_functions_by_name(name)(**kwargs)
         return self.execute_transaction(transaction, owner.address, owner.key)
 
     def get_constructor(self):
