@@ -92,18 +92,18 @@ class Contract(W3):
 
     def exec_function(self, name, kwargs):
         owner = self.owner()
-        functions = [i for i in self.abi if 'type' in i and i['type'] == 'function']
-        print([function['name'] for function in functions])
-        if name not in [function['name'] for function in functions]:
+        keep_function = None
+        for function in self.abi:
+            if 'type' in function and function['type'] == 'function':
+                if 'name' in function and function['name'] == name:
+                    keep_function = function
+        if keep_function is None:
             return [False, "Invalid function name", 400]
-        for function in functions:
-            if function['name'] == name:
-                keep_function = function
         for elem in keep_function['inputs']:
-            name = elem['name']
-            type = elem['type']
-            if name not in kwargs:
-                return [False, f"missing {name}:{type}", 400]
+            elem_name = elem['name']
+            elem_type = elem['type']
+            if elem_name not in kwargs:
+                return [False, f"missing {elem_name}:{elem_type}", 400]
         contract = self.link.eth.contract(self.address, abi=self.abi)
         transaction = contract.get_function_by_name(name)(**kwargs)
         return self.execute_transaction(transaction, owner.address, owner.key)
@@ -910,5 +910,5 @@ if __name__ == '__main__':
    erc = Erc721("", "ether", "testnet")
    erc.connect()
    print(erc.is_connected())
-   print(erc.get_function())
-   print(erc.deploy({'name': 'TEST'}))
+   # print(erc.get_functions())
+   print(erc.exec_function('balanceOf', {'owner': '0x781aD19FADc0482115D53ae660A76B852Ac8c276'}))
