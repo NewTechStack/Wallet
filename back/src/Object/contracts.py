@@ -67,6 +67,11 @@ class W3:
     def owner(self):
         return self.link.eth.account.from_mnemonic(mnemonic)
 
+    def status(self):
+        block = self.link.eth.get_block('latest')
+        ret = self.hextojson(block)
+        return [True, {'data': ret}, None]
+
 class Contract(W3):
     def __init__(self, address, network_type = None, network = None):
         super().__init__(network_type = network_type, network = network)
@@ -90,7 +95,6 @@ class Contract(W3):
         return [True, functions, None]
 
     def exec_function(self, name, kwargs):
-        owner = self.owner()
         keep_function = None
         for function in self.abi:
             if 'type' in function and function['type'] == 'function':
@@ -107,6 +111,7 @@ class Contract(W3):
         transaction = contract.get_function_by_name(name)(**kwargs)
         if keep_function['stateMutability'] == 'view':
             return [True, self.hextojson({'result': transaction.call()}), None]
+        owner = self.owner()
         return self.execute_transaction(transaction, owner.address, owner.key)
 
     def get_constructor(self):
@@ -130,7 +135,7 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        return self.execute_transaction(transaction, owner.address, owner.key)
+        return self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 60000)
 
 class Erc20(Contract):
     def __init__(self, address,  network_type = None, network = None):
@@ -1230,6 +1235,7 @@ class Erc721(Contract):
 if __name__ == '__main__':
    erc = Erc721("", "ether", "testnet")
    erc.connect()
+   print(erc.status()[1]['data']['number'])
    print(erc.is_connected())
    # print(erc.get_functions())
-   print(erc.exec_function('balanceOf', {'owner': '0x781aD19FADc0482115D53ae660A76B852Ac8c276'}))
+   print(erc.exec_function('balanceOf', {'owner': ''}))

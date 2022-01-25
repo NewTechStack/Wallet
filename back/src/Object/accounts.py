@@ -18,11 +18,6 @@ class Account(W3):
         except:
             self.red = None
 
-    def status(self):
-        block = self.link.eth.get_block('latest')
-        ret = self.hextojson(block)
-        return [True, {'data': ret}, None]
-
     def create(self, name):
         if self.usr_id == "-1":
             return [False, "", 400]
