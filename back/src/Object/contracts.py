@@ -489,22 +489,22 @@ class Erc721(Contract):
                     		"type": "constructor"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "_owner",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "_approved",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "uint256",
                     				"name": "_tokenId",
                     				"type": "uint256"
@@ -514,22 +514,22 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "_owner",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "_operator",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "bool",
                     				"name": "_approved",
                     				"type": "bool"
@@ -539,16 +539,16 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "previousOwner",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "newOwner",
                     				"type": "address"
@@ -558,22 +558,22 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "_from",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "_to",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "uint256",
                     				"name": "_tokenId",
                     				"type": "uint256"
