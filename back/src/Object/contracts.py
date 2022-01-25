@@ -62,7 +62,7 @@ class W3:
                 if isinstance(obj, decimal.Decimal):
                     return float(obj)
                 return super().default(obj)
-        return json.loads(json.dumps(dict(data), cls=HexJsonEncoder))
+        return json.loads(json.dumps(dict(data), cls=HexJsonEncoder, use_decimal=True))
 
     def owner(self):
         return self.link.eth.account.from_mnemonic(mnemonic)
