@@ -68,6 +68,7 @@ def contract_get_constructor(cn, nextc):
 
 def contract_exec_function(cn, nextc):
     name = cn.rt[cn.rt[cn.rt['contract']]]
+    print(name)
     err = check.contain(cn.pr, ["kwargs"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
