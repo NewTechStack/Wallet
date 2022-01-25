@@ -99,7 +99,7 @@ class Contract(W3):
         for function in functions:
             if function['name'] == name:
                 keep_function = function
-        for elem in keep_function:
+        for elem in keep_function['inputs']:
             name = elem['name']
             type = elem['type']
             if name not in kwargs:
