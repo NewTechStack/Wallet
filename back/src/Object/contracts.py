@@ -51,7 +51,7 @@ class W3:
         signed_txn = self.link.eth.account.signTransaction(build, private_key=owner_key)
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = self.link.eth.waitForTransactionReceipt(txn)
-        txn_receipt: self.hextojson(txn_receipt)
+        txn_receipt = self.hextojson(txn_receipt)
         return [True, {"transact": txn, "cost": ether_cost, 'return': txn_receipt}, None]
 
     def hextojson(self, data):
