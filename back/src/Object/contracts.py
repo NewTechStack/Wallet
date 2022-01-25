@@ -9,7 +9,7 @@ import json
 mnemonic = str(os.getenv('MNEMONIC', ''))
 
 class W3:
-    def __init__(self, network_type = 'ether', network = 'testnet'):
+    def __init__(self, network_type = 'polygon', network = 'testnet'):
         self.networks = {
             "polygon": {
                 "mainnet": "https://polygon-rpc.com",
