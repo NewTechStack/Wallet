@@ -42,7 +42,7 @@ class W3:
         gas_cost = transaction.estimateGas()
         gas_cost = gas_cost + additionnal_gas
         gas_price = self.link.toWei(150, 'gwei')
-        ether_cost = self.hextojson(self.link.fromWei(gas_price * gas_cost, 'ether'))
+        ether_cost = float(self.link.fromWei(gas_price * gas_cost, 'ether'))
         build = transaction.buildTransaction({
           'gas': gas_cost,
           'gasPrice': gas_price,
