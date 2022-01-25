@@ -106,7 +106,7 @@ class Contract(W3):
         contract = self.link.eth.contract(self.address, abi=self.abi)
         transaction = contract.get_function_by_name(name)(**kwargs)
         if keep_function['stateMutability'] == 'view':
-            return [True, {'result': self.hextojson(transaction.call())}, None]
+            return [True, self.hextojson({'result': transaction.call()})}, None]
         return self.execute_transaction(transaction, owner.address, owner.key)
 
     def get_constructor(self):
