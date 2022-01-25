@@ -52,7 +52,6 @@ class W3:
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = self.link.eth.waitForTransactionReceipt(txn)
         txn_receipt = self.hextojson(txn_receipt)
-        print({"transact": txn, "cost": ether_cost, 'return': txn_receipt})
         return [True, {"transact": txn, "cost": ether_cost, 'return': txn_receipt}, None]
 
     def hextojson(self, data):
@@ -106,6 +105,8 @@ class Contract(W3):
                 return [False, f"missing {elem_name}:{elem_type}", 400]
         contract = self.link.eth.contract(self.address, abi=self.abi)
         transaction = contract.get_function_by_name(name)(**kwargs)
+        if keep_function['stateMutability'] == 'view':
+            transaction.call()
         return self.execute_transaction(transaction, owner.address, owner.key)
 
     def get_constructor(self):
