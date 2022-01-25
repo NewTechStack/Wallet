@@ -98,7 +98,7 @@ class Contract(W3):
             return [False, "Invalid function name", 400]
         for function in functions:
             if function['name'] == name:
-                keep_function = functions[name]
+                keep_function = function
         for elem in keep_function:
             name = elem['name']
             type = elem['type']
