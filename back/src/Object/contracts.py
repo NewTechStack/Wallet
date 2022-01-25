@@ -94,9 +94,9 @@ class Contract(W3):
         for elem in function:
             name = elem['name']
             type = elem['type']
-            elif name not in kwargs:
+            if name not in kwargs:
                 return [False, f"missing {name}:{type}", 400]
-        contract = self.link.eth.contract(self.address, self.abi=self.abi)
+        contract = self.link.eth.contract(self.address, abi=self.abi)
         transaction = contract.constructor(**kwargs)
         return self.execute_transaction(transaction, owner.address, owner.key)
 
@@ -116,10 +116,10 @@ class Contract(W3):
             name = elem['name']
             type = elem['type']
             if name == 'owner':
-                kwargs['owner'] == owner.address
+                kwargs['owner'] = owner.address
             elif name not in kwargs:
                 return [False, f"missing {name}:{type}", 400]
-        contract = self.link.eth.contract(abi=self.abi,bytecode=self.bytecode)
+        contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
         return self.execute_transaction(transaction, owner.address, owner.key)
 
