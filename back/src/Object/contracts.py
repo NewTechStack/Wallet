@@ -3,6 +3,7 @@ from web3 import exceptions
 from web3.middleware import geth_poa_middleware
 from hexbytes import HexBytes
 import os
+import decimal
 import json
 
 mnemonic = str(os.getenv('MNEMONIC', ''))
