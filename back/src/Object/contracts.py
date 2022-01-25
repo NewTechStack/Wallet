@@ -42,7 +42,7 @@ class W3:
         gas_cost = transaction.estimateGas()
         gas_cost = gas_cost + additionnal_gas
         gas_price = self.link.toWei(150, 'gwei')
-        ether_cost = self.link.fromWei(gas_price * gas_cost, 'ether')
+        ether_cost = self.hextojson(self.link.fromWei(gas_price * gas_cost, 'ether'))
         build = transaction.buildTransaction({
           'gas': gas_cost,
           'gasPrice': gas_price,
@@ -52,6 +52,7 @@ class W3:
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = self.link.eth.waitForTransactionReceipt(txn)
         txn_receipt = self.hextojson(txn_receipt)
+        print({"transact": txn, "cost": ether_cost, 'return': txn_receipt})
         return [True, {"transact": txn, "cost": ether_cost, 'return': txn_receipt}, None]
 
     def hextojson(self, data):
