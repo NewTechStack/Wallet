@@ -67,7 +67,7 @@ def contract_get_constructor(cn, nextc):
     return cn.call_next(nextc, err)
 
 def contract_exec_function(cn, nextc):
-    contract_type = contracts[cn.rt['contract']]
+    contract_type = cn.rt['contract']
     contract_address = cn.rt[cn.rt['contract']] if cn.rt['contract'] in cn.rt else None
     name = cn.rt[contract_address] if contract_address is not None else cn.rt[contract_type]
     err = check.contain(cn.pr, ["kwargs"])
