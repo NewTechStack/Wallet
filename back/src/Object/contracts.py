@@ -58,6 +58,8 @@ class W3:
             def default(self, obj):
                 if isinstance(obj, HexBytes):
                     return obj.hex()
+                if isinstance(obj, decimal.Decimal):
+                    return float(obj)
                 return super().default(obj)
         return json.loads(json.dumps(dict(data), cls=HexJsonEncoder))
 
