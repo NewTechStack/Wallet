@@ -105,7 +105,7 @@ class Contract(W3):
             if name not in kwargs:
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(self.address, abi=self.abi)
-        transaction = contract.get_functions_by_name(name)(**kwargs)
+        transaction = contract.get_function_by_name(name)(**kwargs)
         return self.execute_transaction(transaction, owner.address, owner.key)
 
     def get_constructor(self):
