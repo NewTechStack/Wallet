@@ -93,7 +93,8 @@ class Contract(W3):
     def exec_function(self, name, kwargs):
         owner = self.owner()
         functions = [i for i in self.abi if 'type' in i and i['type'] == 'function']
-        if name not in functions:
+        print([function['name'] for function in functions])
+        if name not in [function['name'] for function in functions]:
             return [False, "Invalid function name", 400]
         function = functions[name]
         for elem in function:
