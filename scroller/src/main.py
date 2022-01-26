@@ -89,7 +89,9 @@ class Scroller:
                         for transaction in block['transactions']:
                             recei = transaction['to']
                             expe = transaction['from']
-                            if recei in address_list or expe in address_list:
+                            address =  recei if  recei in address_list else None
+                            address = expe if expe in address_list else None
+                            if address is not None :
                                 self.transactions.insert({
                                     'chain': link[1],
                                     'address': address,
