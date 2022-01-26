@@ -76,5 +76,5 @@ def contract_exec_function(cn, nextc):
 
 def contract(cn, nextc):
     id = cn.get.get('id')
-    err = Contract().get_contract(id)
+    err = Contract('').get_contract(id)
     return cn.call_next(nextc, err)
