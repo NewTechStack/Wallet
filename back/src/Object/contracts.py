@@ -47,7 +47,7 @@ class W3:
         return [True, f"Connected to {provider}", None]
 
     def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 0):
-        gas_cost = transaction.estimateGas()
+        gas_cost = transaction.estimateGas({'from': owner_address})
         gas_cost = gas_cost + additionnal_gas
         gas_price = self.link.toWei(150, 'gwei')
         ether_cost = float(self.link.fromWei(gas_price * gas_cost, 'ether'))
@@ -55,6 +55,7 @@ class W3:
         while success is False:
             try:
                 build = transaction.buildTransaction({
+                  'from': owner_address,
                   'gas': gas_cost,
                   'gasPrice': gas_price,
                   'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
