@@ -49,7 +49,7 @@ class Account(W3):
         return [True, {'wallets': wallets}, None]
 
     def wallet_from_id(self, id):
-        wallet = list(self.red.get(
+        wallet = list(self.red.filter(
                 (r.row["usr_id"] ==  self.usr_id)
                 & (r.row["id"] ==  id)
             ).run())
@@ -70,7 +70,7 @@ class Account(W3):
         if account_addr[0] is False:
             return account_addr
         account_addr = account_addr[1]['address']
-        transaction = list(self.trx.get(
+        transaction = list(self.trx.filter(
                 (r.row["address"] ==  account_addr)
                 & (r.row["type"] ==  'account')
             ).run())
