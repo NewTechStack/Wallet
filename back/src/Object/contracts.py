@@ -102,7 +102,7 @@ class Contract(W3):
         self.abi = []
         self.bytecode = ""
         try:
-            self.red = get_conn().db("wallet").table('contracts
+            self.red = get_conn().db("wallet").table('contracts')
             self.trx = get_conn().db("wallet").table('transactions')
         except:
             self.red = None
