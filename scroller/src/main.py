@@ -72,21 +72,14 @@ class Scroller:
     def init_db(self):
         while True:
             try:
-                if self.meta is not None:
-                    self.meta.close()
-                    self.transactions.close()
-                    self.accounts.close()
-                    self.meta = None
                 self.meta = get_conn().db("wallet").table('transactions_meta')
                 self.transactions = get_conn().db("wallet").table('transactions')
                 self.accounts = get_conn().db("wallet").table('accounts')
                 self.address_list = [account['address'] for account in list(self.accounts.run())]
                 break
-                print('waiting for DB')
             except:
                 pass
         self.address_list.append('0x781aD19FADc0482115D53ae660A76B852Ac8c276')
-        print(self.address_list)
 
     def lastchecked(self, chain_id, rpc, latest):
         try:
