@@ -156,11 +156,11 @@ class Contract(W3):
                 "log": ret[1],
                 "abi": self.abi,
                 "bytecode": self.bytecode,
-                "address": ret[1]['log']['return']['contractAddress'],
-                "owner": owner.address,
-                "network_type": self.network_type,
-                "network": self.network
-            }
+            },
+            "owner": owner.address,
+            "network_type": self.network_type,
+            "network": self.network,
+            "address": ret[1]['log']['return']['contractAddress'],
         }
         res = dict(self.red.insert([data]).run())
         id = res["generated_keys"][0]
@@ -175,10 +175,10 @@ class Contract(W3):
             return [False, "invalid contract id", 404]
         contracts = list(contracts)
         for contract in contracts:
-            del contract['bytecode']
-            del contract['abi']
+            del contract['deployment_infos']['bytecode']
+            del contract['deployment_infos']['abi']
             if expand is False:
-                del contract['log']
+                del contract['deployment_infos']['log']
         return [True, contract, None]
 
     def internal_get_contract(self, id):
@@ -186,8 +186,8 @@ class Contract(W3):
         if contract is None:
             return [False, "invalid contract id", 404]
         contract = dict(contract)['deployment_infos']
-        abi = contract['abi']
-        bytecode = contract['bytecode']
+        abi = contract['deployment_infos']['abi']
+        bytecode = contract['deployment_infos']['bytecode']
         address = contract['address']
         network_type = contract['network_type']
         network = contract['network']
