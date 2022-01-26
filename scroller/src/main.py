@@ -117,9 +117,16 @@ class Scroller:
         self.init_db()
         while True:
             for link in self.c:
-                latest = link[0].eth.get_block('latest')['number']
-                rpc = link[1]
-                chain_id = link[0].eth.chain_id
+                i = 0
+                while True and i < 3:
+                    try:
+                        latest = link[0].eth.get_block('latest')['number']
+                        rpc = link[1]
+                        chain_id = link[0].eth.chain_id
+                        break
+                    except:
+                        pass
+                    i += 1
                 lastchecked = self.lastchecked(chain_id, rpc, latest)
                 if lastchecked is False:
                     continue
