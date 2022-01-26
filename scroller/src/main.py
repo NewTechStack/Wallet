@@ -113,11 +113,13 @@ class Scroller:
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
 
     def start(self):
+        loop_number = 0
         while True:
+            loop_number = loop_number + 1 if loop_number < 99999 else 1
             print('Connection to Database')
             self.init_db()
             print('Connected to Database')
-            print('Starting')
+            print(f'Starting loop {str(loop_number.rjust(5, '0'))}')
             for link in self.c:
                 i = 0
                 while True and i < 3:
