@@ -122,12 +122,17 @@ class Scroller:
                     'transaction':  transaction,
                     'type': 'account'
                 }
+                print(out_t,self.contract_list )
                 if out_t in self.contract_list:
                     func = transaction['input']
                     func = func[0:10] if len(fun) > 10 else None
+                    print(func)
                     functions = list(self.contracts.filter((r.row["address"] == out_t)).run())
+                    print(functions)
                     functions = functions[0]['deployment_infos']
+                    print(functions)
                     functions = functions['functions']['hash']
+                    print(functions)
                     for function in functions:
                         if function[function] == func:
                             func = function
