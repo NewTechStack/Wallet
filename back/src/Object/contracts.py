@@ -155,7 +155,7 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 0)
+        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 30000)
         if not ret[0]:
             return ret
         print(ret)
