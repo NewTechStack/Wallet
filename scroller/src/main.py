@@ -7,7 +7,6 @@ from rethinkdb import RethinkDB
 
 def get_conn():
     r = RethinkDB()
-    r.connect("rethink", 28015, password="").repl()
     return r
 
 r = RethinkDB()
@@ -30,10 +29,15 @@ class Scroller:
                 self.c.append((Web3(Web3.HTTPProvider(self.w3[w3][link])), self.w3[w3][link]))
         for link in self.c:
             link[0].middleware_onion.inject(geth_poa_middleware, layer=0)
-        self.meta = get_conn().db("wallet").table('transactions_meta')
-        self.transactions = get_conn().db("wallet").table('transactions')
 
     def start(self):
+        while True:
+            try:
+                self.meta = r.connect("rethink", 28015, password="").repl().db("wallet").table('transactions_meta')
+                self.transactions = r.connect("rethink", 28015, password="").repl().db("wallet").table('transactions_meta')
+                break
+            except:
+                print('waiting for DB')
         while True:
             for link in self.c:
                 latest = link[0].eth.get_block('latest')['number']
