@@ -199,11 +199,13 @@ class Contract(W3):
         address = contract['address']
         network_type = contract['network_type']
         network = contract['network']
-        return ERCX(address, abi, bytecode, network_type, network)
+        return [True, ERCX(address, abi, bytecode, network_type, network), None]
 
 class ERCX(Contract):
     def __init__(self, address,  abi, bytecode, network_type = None, network = None):
          super().__init__(address, network_type = network_type, network = network)
+         self.bytecode = bytecode
+         self.abi = abi
 
 class Erc20(Contract):
     def __init__(self, address,  network_type = None, network = None):

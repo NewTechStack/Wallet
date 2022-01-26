@@ -32,7 +32,7 @@ def account_balance(cn, nextc):
     err = cn.private["account"].balance(cn.rt["wallet"])
     return cn.call_next(nextc, err)
 
-def contract_type(cn, nextc):
+def contract_by_type(cn, nextc):
     err = check.contain(cn.rt, ["contract"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
@@ -47,6 +47,16 @@ def contract_type(cn, nextc):
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     cn.private['contract'] = contract_type(contract_address)
+    cn.private['contract'].connect()
+    err = [True, {}, None]
+    return cn.call_next(nextc, err)
+
+def contract_by_id(cn, nextc):
+    contract = str(cn.rt.get('contract'))
+    err = Contract('').internal_get_contract(cn.rt['contract'])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.private['contract'] = err[1]
     cn.private['contract'].connect()
     err = [True, {}, None]
     return cn.call_next(nextc, err)
@@ -67,7 +77,7 @@ def contract_get_constructor(cn, nextc):
     return cn.call_next(nextc, err)
 
 def contract_exec_function(cn, nextc):
-    name = cn.rt[cn.rt[cn.rt['contract']]]
+    name = cn.rt[cn.rt['contract']]
     err = check.contain(cn.pr, ["kwargs"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
