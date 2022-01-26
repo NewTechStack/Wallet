@@ -119,7 +119,7 @@ class Scroller:
             print('Connection to Database')
             self.init_db()
             print('Connected to Database')
-            print(f'Starting loop {str(loop_number.rjust(5, '0'))}')
+            print(f"Starting loop {str(loop_number).rjust(5, '0')}")
             for link in self.c:
                 i = 0
                 while True and i < 3:
