@@ -120,8 +120,8 @@ class Contract(W3):
         contract = dict(self.red.get(id).run())
         address = contract["address"]
         transactions = list(self.trx.get(
-                (r.row["address"] ==  address)
-                & (r.row["type"] ==  'contract')
+                (r.row["address"] == address)
+                & (r.row["type"] == 'contract')
             ).run())
         return [True, transactions, None]
 

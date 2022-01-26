@@ -86,6 +86,7 @@ def contract_get_constructor(cn, nextc):
 
 def contract_get_transaction(cn, nextc):
     contract = cn.rt['contract']
+    print(cn.rt['contract'])
     err = cn.private['contract'].get_transaction(contract)
     return cn.call_next(nextc, err)
 
