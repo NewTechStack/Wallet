@@ -121,7 +121,10 @@ class Scroller:
 
     def start(self):
         while True:
+            print('Connection to Database')
             self.init_db()
+            print('Connected to Database')
+            print('Starting')
             for link in self.c:
                 i = 0
                 while True and i < 3:
@@ -138,10 +141,11 @@ class Scroller:
                 lastchecked = self.lastchecked(chain_id, rpc, latest)
                 if lastchecked is False:
                     continue
-                print(f"[{str(chain_id).ljust(10)}]: from {str(lastchecked).rjust(10, '0')} to {str(latest).ljust(10, '0')}")
+                print(f"[{str(chain_id).ljust(10)}]: from {str(lastchecked).rjust(10, '0')} to {str(latest).rjust(10, '0')}")
                 while lastchecked < latest:
                     lastchecked += 1
                     self.checkblock(link, lastchecked, chain_id)
+            print('Checked all chains, sleeping ... ')
             time.sleep(30)
         return
 
