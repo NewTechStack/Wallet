@@ -19,7 +19,7 @@ class W3:
                 "testnet": "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
             }
         }
-        self.network_type = 'ether' if network_type == None else network_type
+        self.network_type = 'polygon' if network_type == None else network_type
         self.network = 'testnet' if network == None else network
         self.link = Web3()
         self.unit = 'ETH' if network == 'ether' else 'MATIC' if network == 'polygon' else ''
@@ -141,7 +141,7 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        return self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 90000)
+        return self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 0)
 
 class Erc20(Contract):
     def __init__(self, address,  network_type = None, network = None):
