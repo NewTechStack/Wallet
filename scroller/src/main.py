@@ -32,12 +32,11 @@ class Scroller:
 
     def start(self):
         while True:
-            try:
+            if True:
                 connect = r.connect("rethink", 28015, password="").repl()
                 self.meta = connect.db("wallet").table('transactions_meta')
                 self.transactions = connect.db("wallet").table('transactions')
                 break
-            except:
                 print('waiting for DB')
         while True:
             for link in self.c:
