@@ -106,12 +106,9 @@ class Contract(W3):
     def get_contract(self):
         return self.link.eth.contract(self.address, abi=self.abi)
 
-    def get_functions(self):
-        functions = [i for i in self.abi if 'type' in i and i['type'] == 'function']
-        for function in functions:
-            del function['outputs']
-            del function['stateMutability']
-            del function['type']
+    def get_functions(self, id):
+        contract = dict(self.red.get(id).run())
+        functions = contract["deployment_infos"]["functions"]
         return [True, functions, None]
 
     def exec_function(self, name, kwargs):
@@ -158,17 +155,25 @@ class Contract(W3):
         ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 300000)
         if not ret[0]:
             return ret
-        signatures = {}
+        simplified = {}
+        hash = {}
         for func in [obj for obj in self.abi if obj['type'] == 'function']:
             name = func['name']
             types = [input['type'] for input in func['inputs']]
-            signatures[name] = '{}({})'.format(name,','.join(types))
+            args = [input['name'] + '(' + input['type'] + ')' for input in func['inputs']]
+            signature = '{}({})'.format(name,','.join(types))
+            simple = '{}({})'.format(name,','.join(args))
+            simplified[name] = simple
+            hash[name] = self.link.sha3(signature).substring(0, 10)
         data = {
             'deployment_infos': {
                 "log": ret[1],
                 "abi": self.abi,
                 "bytecode": self.bytecode,
-                "function_hash": signatures
+                "functions": {
+                    "clear": simplified,
+                    "hash": hash
+                }
             },
             "owner": owner.address,
             "network_type": self.network_type,
