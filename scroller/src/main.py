@@ -57,7 +57,7 @@ class Scroller:
         self.c = []
         for w3 in self.w3:
             for link in self.w3[w3]:
-                self.c.append((Web3(Web3.HTTPProvider(self.w3[w3][link])), self.w3[w3][link], f"{w3} {link}"))
+                self.c.append((Web3(Web3.HTTPProvider(self.w3[w3][link])), self.w3[w3][link], w3, link))
         for link in self.c:
             link[0].middleware_onion.inject(geth_poa_middleware, layer=0)
         self.meta = None
@@ -110,7 +110,8 @@ class Scroller:
                     'chain': {
                         'rpc': rpc,
                         'chain_id': chain_id,
-                        'name': link[2]
+                        'network_type': link[2],
+                        'network': link[3]
                     },
                     'address': address,
                     'date': str(datetime.datetime.utcnow()),
