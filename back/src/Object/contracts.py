@@ -164,7 +164,7 @@ class Contract(W3):
             signature = '{}({})'.format(name,','.join(types))
             simple = '{}({})'.format(name,','.join(args))
             simplified[name] = simple
-            hash[name] = self.link.sha3(signature).substring(0, 10)
+            hash[name] = self.link.keccak(text=signature).substring(0, 10)
         data = {
             'deployment_infos': {
                 "log": ret[1],
