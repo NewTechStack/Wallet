@@ -57,6 +57,7 @@ class Scroller:
                 self.c.append((Web3(Web3.HTTPProvider(self.w3[w3][link])), self.w3[w3][link]))
         for link in self.c:
             link[0].middleware_onion.inject(geth_poa_middleware, layer=0)
+        self.meta = None
 
     def hextojson(self, data):
         class HexJsonEncoder(json.JSONEncoder):
@@ -71,6 +72,11 @@ class Scroller:
     def init_db(self):
         while True:
             try:
+                if self.meta is not None:
+                    self.meta.close()
+                    self.transactions.close()
+                    self.accounts.close()
+                    self.meta = None
                 self.meta = get_conn().db("wallet").table('transactions_meta')
                 self.transactions = get_conn().db("wallet").table('transactions')
                 self.accounts = get_conn().db("wallet").table('accounts')
@@ -114,8 +120,8 @@ class Scroller:
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
 
     def start(self):
-        self.init_db()
         while True:
+            self.init_db()
             for link in self.c:
                 i = 0
                 while True and i < 3:
