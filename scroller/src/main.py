@@ -123,7 +123,7 @@ class Scroller:
                     'type': 'account'
                 }
                 print(out_t,self.contract_list )
-                if out_t in self.contract_list:
+                if in_t in self.contract_list:
                     func = transaction['input']
                     func = func[0:10] if len(fun) > 10 else None
                     print(func)
