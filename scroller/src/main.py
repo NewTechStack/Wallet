@@ -159,9 +159,11 @@ class Scroller:
                         chain_id = link[0].eth.chain_id
                         break
                     except:
+
                         pass
                     i += 1
                 if i == 3:
+                    print(f'passing chain: {str(chain_id).ljust(10)}')
                     continue
                 lastchecked = self.lastchecked(chain_id, rpc, latest)
                 if lastchecked is False:
