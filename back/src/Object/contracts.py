@@ -151,6 +151,7 @@ class Contract(W3):
         ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 0)
         if not ret[0]:
             return ret
+        print(ret)
         data = {
             'deployment_infos': {
                 "log": ret[1],
