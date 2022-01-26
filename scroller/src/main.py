@@ -122,16 +122,13 @@ class Scroller:
                     'transaction':  transaction,
                     'type': 'account'
                 }
-                print(recei,self.contract_list )
                 if recei in self.contract_list:
                     func = transaction['input']
                     func = func[0:10] if len(func) > 10 else None
                     functions = list(self.contracts.filter((r.row["address"] == recei)).run())
                     functions = functions[0]['deployment_infos']
                     functions = functions['functions']['hash']
-                    print(functions)
                     for function in functions:
-                        print(function, func)
                         if functions[function] == func:
                             func = function
                             break
