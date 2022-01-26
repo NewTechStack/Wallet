@@ -42,6 +42,16 @@ services:
     volumes:
       - ./back/src:/home/api:ro
 
+  scroller:
+    build:
+      context: ./scroller/
+      dockerfile: Dockerfile.scroller
+    container_name: scroller-wallet
+    tty: true
+    restart: always
+    networks:
+      - default
+
   rethink:
     image: rethinkdb:latest
     container_name: rethink-wallet

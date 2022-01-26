@@ -2,10 +2,12 @@ from web3 import Web3
 from web3.middleware import geth_poa_middleware
 import json
 from hexbytes import HexBytes
-from .contracts import *
+
 try:
+    from .contracts import *
     from .rethink import get_conn, r
 except:
+    from contracts import *
     pass
 
 class Account(W3):
@@ -28,11 +30,7 @@ class Account(W3):
                 "address": str(acct.address),
                 "mnemonic": str(mnem),
                 "key": str(acct.key),
-                "creation_block": self.link.eth.get_block('latest')['number'],
-                "transactions": {
-                  "last_checked": self.link.eth.get_block('latest')['number'],
-                  "transactions_details": []
-                }
+                "creation_block": self.link.eth.get_block('latest')['number']
         }
         res = dict(self.red.insert([data]).run())
         id = res["generated_keys"][0]
@@ -83,3 +81,20 @@ class Account(W3):
         except:
             pass
         return False
+
+    def update_transac(self, address, since):
+        actual = self.link.eth.get_block('latest')['number']
+        while actual > since:
+            block = self.link.eth.get_block(actual, full_transactions=True)
+            for transaction in block['transactions']:
+                recei = transaction['to']
+                expe = transaction['from']
+                if recei == address or expe == address:
+                    print('found', transaction)
+            actual -= 1
+            print(actual)
+        return
+
+if __name__ == '__main__':
+    account = Account()
+    account.update_transac('0x781aD19FADc0482115D53ae660A76B852Ac8c276', 12)
