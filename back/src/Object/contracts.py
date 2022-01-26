@@ -119,6 +119,7 @@ class Contract(W3):
     def get_transaction(self, id):
         contract = dict(self.red.get(id).run())
         address = contract["address"]
+        print(address)
         transactions = list(self.trx.get(
                 (r.row["address"] == address)
                 & (r.row["type"] == 'contract')
