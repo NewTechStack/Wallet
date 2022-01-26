@@ -92,9 +92,8 @@ class Scroller:
             return False
         return lastchecked[0]['lastchecked']
 
-    def checkblock(self, link, block_number):
+    def checkblock(self, link, block_number, chain_id):
         rpc = link[1]
-        chain_id = link[0].net.Net.chainID()
         block = link[0].eth.get_block(block_number, full_transactions=True)
         for transaction in block['transactions']:
             recei = transaction['to']
@@ -105,7 +104,7 @@ class Scroller:
                 self.transactions.insert({
                     'chain': {
                         'rpc': rpc,
-                        'chain_id': link[0].net.Net.chainID()
+                        'chain_id': chain_id
                     },
                     'address': address,
                     'date': str(datetime.datetime.utcnow()),
@@ -127,7 +126,7 @@ class Scroller:
                 print(f"[{str(chain_id).ljust(10)}]: from {str(lastchecked).rjust(10, '0')} to {str(latest).ljust(10, '0')}")
                 while lastchecked < latest:
                     lastchecked += 1
-                    self.checkblock(link, lastchecked)
+                    self.checkblock(link, lastchecked, chain_id)
             time.sleep(30)
         return
 
