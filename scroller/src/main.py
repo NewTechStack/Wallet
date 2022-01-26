@@ -82,7 +82,7 @@ class Scroller:
         self.address_list.append('0x781aD19FADc0482115D53ae660A76B852Ac8c276')
         print(self.address_list)
 
-    def lastchecked(self, chain_id, rpc):
+    def lastchecked(self, chain_id, rpc, latest):
         try:
             lastchecked = list(self.meta.filter(r.row['chain_id'] == chain_id).run())
         except:
@@ -120,7 +120,7 @@ class Scroller:
                 latest = link[0].eth.get_block('latest')['number']
                 rpc = link[1]
                 chain_id = link[0].eth.chain_id
-                lastchecked = self.lastchecked(chain_id, rpc)
+                lastchecked = self.lastchecked(chain_id, rpc, latest)
                 if lastchecked is False:
                     continue
                 print(f"[{str(chain_id).ljust(10)}]: from {str(lastchecked).rjust(10, '0')} to {str(latest).ljust(10, '0')}")
