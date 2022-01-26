@@ -22,6 +22,8 @@ class W3:
         self.network_type = 'ether' if network_type == None else network_type
         self.network = 'testnet' if network == None else network
         self.link = Web3()
+        self.unit = 'ETH' if network == 'ether' else 'MATIC' if network == 'polygon' else ''
+
 
     def is_connected(self):
         return self.link.isConnected()
@@ -37,6 +39,7 @@ class W3:
         self.link = Web3(Web3.HTTPProvider(provider))
         self.link.middleware_onion.inject(geth_poa_middleware, layer=0)
         self.link.eth.account.enable_unaudited_hdwallet_features()
+        self.unit = 'ETH' if network == 'ether' else 'MATIC' if network == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
 
     def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 0):
@@ -55,7 +58,7 @@ class W3:
         del txn_receipt['logs']
         del txn_receipt['logsBloom']
         txn_receipt = self.hextojson(txn_receipt)
-        return [True, {"transact": txn, "cost": ether_cost, 'return': txn_receipt}, None]
+        return [True, {"transact": txn, "cost": ether_cost, 'unit': self.unit, 'return': txn_receipt}, None]
 
     def hextojson(self, data):
         class HexJsonEncoder(json.JSONEncoder):
@@ -138,7 +141,7 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        return self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 60000)
+        return self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 90000)
 
 class Erc20(Contract):
     def __init__(self, address,  network_type = None, network = None):
