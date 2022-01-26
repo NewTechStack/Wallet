@@ -134,7 +134,8 @@ class Scroller:
                         print(function, func)
                         if functions[function] == func:
                             func = function
-                    data['function'] = function
+                            break
+                    data['function'] = func
                 self.transactions.insert(data).run()
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
         return True
