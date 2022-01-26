@@ -119,7 +119,7 @@ class Scroller:
             for link in self.c:
                 latest = link[0].eth.get_block('latest')['number']
                 rpc = link[1]
-                chain_id = link[0].net.chainId
+                chain_id = link[0].eth.chain_id
                 lastchecked = self.lastchecked(chain_id, rpc)
                 if lastchecked is False:
                     continue
