@@ -93,7 +93,10 @@ class Scroller:
 
     def checkblock(self, link, block_number, chain_id):
         rpc = link[1]
-        block = link[0].eth.get_block(block_number, full_transactions=True)
+        try:
+            block = link[0].eth.get_block(block_number, full_transactions=True)
+        except:
+            return False
         for transaction in block['transactions']:
             recei = transaction['to']
             expe = transaction['from']
@@ -111,6 +114,7 @@ class Scroller:
                     'type': 'account'
                 }).run()
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
+        return True
 
     def start(self):
         loop_number = 0
@@ -139,7 +143,9 @@ class Scroller:
                 print(f"[{str(chain_id).ljust(10)}]: from {str(lastchecked).rjust(10, '0')} to {str(latest).rjust(10, '0')}")
                 while lastchecked < latest:
                     lastchecked += 1
-                    self.checkblock(link, lastchecked, chain_id)
+                    ret = self.checkblock(link, lastchecked, chain_id)
+                    if ret is False:
+                        lastchecked -= 1
             print('Checked all chains, sleeping ... ')
             time.sleep(30)
         return
