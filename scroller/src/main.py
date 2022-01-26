@@ -5,11 +5,7 @@ from web3.middleware import geth_poa_middleware
 
 from rethinkdb import RethinkDB
 
-def get_conn():
-    r = RethinkDB()
-    return r
-
-r = RethinkDB()
+r =
 
 
 class Scroller:
@@ -33,7 +29,8 @@ class Scroller:
     def start(self):
         while True:
             if True:
-                connect = r.connect("rethink", 28015, password="").repl()
+                connect =  RethinkDB().connect("rethink", 28015, password="").repl()
+                print(connect)
                 self.meta = connect.db("wallet").table('transactions_meta')
                 self.transactions = connect.db("wallet").table('transactions')
                 break
