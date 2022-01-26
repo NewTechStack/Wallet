@@ -121,7 +121,7 @@ class Scroller:
                 print(f"{network.ljust(25)}: from {str(lastchecked).ljust(10)} to {str(latest).ljust(10)}")
                 while lastchecked < latest:
                     lastchecked += 1
-                    self.checkblock(link, network)
+                    self.checkblock(link, lastchecked, network)
             time.sleep(30)
         return
 
