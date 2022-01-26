@@ -78,7 +78,9 @@ class Scroller:
                 self.meta = get_conn().db("wallet").table('transactions_meta')
                 self.transactions = get_conn().db("wallet").table('transactions')
                 self.accounts = get_conn().db("wallet").table('accounts')
+                self.contracts = get_conn().db("wallet").table('contracts')
                 self.address_list = [account['address'] for account in list(self.accounts.run())]
+                self.contract_list = [contract['address'] for contract in list(self.contracts.run())]
                 break
             except:
                 pass
@@ -103,9 +105,9 @@ class Scroller:
         for transaction in block['transactions']:
             recei = transaction['to']
             expe = transaction['from']
-            address =  recei if  recei in self.address_list else None
-            address = expe if expe in self.address_list else None
-            if address is not None :
+            in =  recei if  recei in self.address_list else None
+            out = expe if expe in self.address_list else None
+            if in is not None or out is not None:
                 self.transactions.insert({
                     'chain': {
                         'rpc': rpc,
@@ -113,7 +115,8 @@ class Scroller:
                         'network_type': link[2],
                         'network': link[3]
                     },
-                    'address': address,
+                    'address': in if in is not None else out ,
+                    'status': 'in' if in is not None else 'out',
                     'date': str(datetime.datetime.utcnow()),
                     'transaction':  self.hextojson(transaction),
                     'type': 'account'

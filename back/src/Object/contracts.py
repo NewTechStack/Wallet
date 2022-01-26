@@ -155,15 +155,20 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 30000)
+        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 300000)
         if not ret[0]:
             return ret
-        print(ret)
+        signatures = {}
+        for func in [obj for obj in self.abi if obj['type'] == 'function']:
+            name = func['name']
+            types = [input['type'] for input in func['inputs']]
+            signatures[name] = '{}({})'.format(name,','.join(types))
         data = {
             'deployment_infos': {
                 "log": ret[1],
                 "abi": self.abi,
                 "bytecode": self.bytecode,
+                "function_hash": signatures
             },
             "owner": owner.address,
             "network_type": self.network_type,
