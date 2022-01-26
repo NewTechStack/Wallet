@@ -10,7 +10,7 @@ def account_load(cn, nextc):
     err = [True, {}, None]
     return cn.call_next(nextc, err)
 
-def blockcahin_status(cn, nextc):
+def blockchain_status(cn, nextc):
     err = cn.private["account"].status()
     return cn.call_next(nextc, err)
 
@@ -30,6 +30,13 @@ def account_balance(cn, nextc):
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     err = cn.private["account"].balance(cn.rt["wallet"])
+    return cn.call_next(nextc, err)
+
+def account_transactions(cn, nextc):
+    err = check.contain(cn.rt, ["wallet"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    err = cn.private["account"].transactions(cn.rt["wallet"])
     return cn.call_next(nextc, err)
 
 def contract_by_type(cn, nextc):

@@ -17,6 +17,7 @@ class Account(W3):
         self.usr_id = str(usr_id)
         try:
             self.red = get_conn().db("wallet").table('accounts')
+            self.trx = get_conn().db("wallet").table('transactions')
         except:
             self.red = None
 
@@ -47,11 +48,32 @@ class Account(W3):
             i += 1
         return [True, {'wallets': wallets}, None]
 
-    def balance(self, account_addr):
-        account_addr = self.__address_from_str(account_addr)
-        if account_addr is False:
-            return [False, "Invalid wallet ID - user correspondance checksumAddress", 404]
+    def wallet_from_id(self, id):
+        wallet = list(self.red.get(
+                (r.row["usr_id"] ==  self.usr_id)
+                & (r.row["id"] ==  id)
+            ).run())
+        if len(wallet) == 0:
+            return [False, "Invalid wallet id", 404]
+        return [True, {'address': wallet[0]['address']}, None]
+
+    def balance(self, id):
+        account_addr = self.wallet_from_id(id)
+        if account_addr[0] is False:
+            return account_addr
+        account_addr = account_addr[1]['address']
         balance = self.link.eth.get_balance(str(account_addr))
+        return [True, {'data': balance}, None]
+
+    def transactions(self, id):
+        account_addr = self.wallet_from_id(id)
+        if account_addr[0] is False:
+            return account_addr
+        account_addr = account_addr[1]['address']
+        transaction = list(self.trx.get(
+                (r.row["address"] ==  account_addr)
+                & (r.row["type"] ==  'account')
+            ).run())
         return [True, {'data': balance}, None]
 
     def token_balance(self, account_addr, contract_addr):
