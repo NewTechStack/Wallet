@@ -156,6 +156,7 @@ class Contract(W3):
                 "log": ret[1],
                 "abi": self.abi,
                 "bytecode": self.bytecode,
+                "address": ret[1]['log']['return']['contractAddress'],
                 "owner": owner.address,
                 "network_type": self.network_type,
                 "network": self.network
@@ -165,14 +166,19 @@ class Contract(W3):
         id = res["generated_keys"][0]
         return [True, {"id": id} , None]
 
-    def get_contract(self, id):
+    def get_contract(self, id, expand):
         command =  self.red
         if id is not None:
-            command = command.get(id)
-        contract = command.run()
-        if contract is None and id is not None:
+            command = command.filter(r.row["id"] == id)
+        contracts = command.run()
+        if contracts is None and id is not None:
             return [False, "invalid contract id", 404]
-        contract = dict(contract)
+        contracts = list(contracts)
+        for contract in contracts:
+            del contract['bytecode']
+            del contract['abi']
+            if expand is False:
+                del contract['log']
         return [True, contract, None]
 
     def internal_get_contract(self, id):
@@ -182,7 +188,7 @@ class Contract(W3):
         contract = dict(contract)['deployment_infos']
         abi = contract['abi']
         bytecode = contract['bytecode']
-        address = contract['log']['return']['contractAddress']
+        address = contract['address']
         network_type = contract['network_type']
         network = contract['network']
         return ERCX(address, abi, bytecode, network_type, network)

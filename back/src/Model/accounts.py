@@ -76,5 +76,7 @@ def contract_exec_function(cn, nextc):
 
 def contract(cn, nextc):
     id = cn.get.get('id')
-    err = Contract('').get_contract(id)
+    expand = cn.get.get('expand')
+    expand = True if expand is not None else False
+    err = Contract('').get_contract(id, expand)
     return cn.call_next(nextc, err)
