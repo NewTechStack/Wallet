@@ -161,7 +161,7 @@ class Contract(W3):
             "owner": owner.address,
             "network_type": self.network_type,
             "network": self.network,
-            "address": ret[1]['log']['contractAddress'],
+            "address": ret[1]['return']['contractAddress'],
         }
         res = dict(self.red.insert([data]).run())
         id = res["generated_keys"][0]
