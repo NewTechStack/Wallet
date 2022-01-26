@@ -50,11 +50,17 @@ class W3:
         gas_cost = gas_cost + additionnal_gas
         gas_price = self.link.toWei(150, 'gwei')
         ether_cost = float(self.link.fromWei(gas_price * gas_cost, 'ether'))
-        build = transaction.buildTransaction({
-          'gas': gas_cost,
-          'gasPrice': gas_price,
-          'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
-        })
+        success = False
+        while success is False:
+            try:
+                build = transaction.buildTransaction({
+                  'gas': gas_cost,
+                  'gasPrice': gas_price,
+                  'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
+                })
+                success = True
+            except requests.exceptions.HTTPError:
+                pass
         signed_txn = self.link.eth.account.signTransaction(build, private_key=owner_key)
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = dict(self.link.eth.waitForTransactionReceipt(txn))
