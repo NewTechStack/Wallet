@@ -114,6 +114,15 @@ class Contract(W3):
         functions = contract["deployment_infos"]["functions"]
         return [True, functions, None]
 
+    def get_transaction(self, id):
+        contract = dict(self.red.get(id).run())
+        address = contract["address"]
+        transactions = list(self.trx.get(
+                (r.row["address"] ==  address)
+                & (r.row["type"] ==  'contract')
+            ).run())
+        return [True, transactions, None]
+
     def exec_function(self, name, kwargs):
         keep_function = None
         for function in self.abi:

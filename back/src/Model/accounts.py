@@ -69,7 +69,8 @@ def contract_by_id(cn, nextc):
     return cn.call_next(nextc, err)
 
 def contract_get_function(cn, nextc):
-    err = cn.private['contract'].get_functions()
+    contract = str(cn.rt.get('contract'))
+    err = cn.private['contract'].get_functions(contract)
     return cn.call_next(nextc, err)
 
 def contract_exec_constructor(cn, nextc):
@@ -82,6 +83,11 @@ def contract_exec_constructor(cn, nextc):
 def contract_get_constructor(cn, nextc):
     err = cn.private['contract'].get_constructor()
     return cn.call_next(nextc, err)
+
+def contract_get_transaction(cn, nextc):
+    err = cn.private['contract'].get_transaction()
+    return cn.call_next(nextc, err)
+
 
 def contract_exec_function(cn, nextc):
     name = cn.rt[cn.rt['contract']]
