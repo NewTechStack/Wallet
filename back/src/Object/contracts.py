@@ -5,6 +5,10 @@ from hexbytes import HexBytes
 import os
 import decimal
 import json
+try:
+    from .rethink import get_conn, r
+except:
+    pass
 
 mnemonic = str(os.getenv('MNEMONIC', ''))
 
@@ -87,6 +91,10 @@ class Contract(W3):
             pass
         self.abi = []
         self.bytecode = ""
+        try:
+            self.red = get_conn().db("wallet").table('contracts')
+        except:
+            self.red = None
 
     def get_contract(self):
         return self.link.eth.contract(self.address, abi=self.abi)
@@ -140,7 +148,48 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        return self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 0)
+        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 0)
+        if not ret[0]:
+            return ret
+        data = {
+            'deployment_infos': {
+                "log": ret[1],
+                "abi": self.abi,
+                "bytecode": self.bytecode,
+                "owner": owner.address,
+                "network_type": self.network_type,
+                "network": self.network
+            }
+        }
+        res = dict(self.red.insert([data]).run())
+        id = res["generated_keys"][0]
+        return [True, {"id": id} , None]
+
+    def get_contract(self, id):
+        command =  self.red
+        if id is not None:
+            command = command.get(id)
+        contract = command.run()
+        if contract is None and id is not None:
+            return [False, "invalid contract id", 404]
+        contract = dict(contract)
+        return [True, contract, None]
+
+    def internal_get_contract(self, id):
+        contract = self.red.get(id).run()
+        if contract is None:
+            return [False, "invalid contract id", 404]
+        contract = dict(contract)['deployment_infos']
+        abi = contract['abi']
+        bytecode = contract['bytecode']
+        address = contract['log']['return']['contractAddress']
+        network_type = contract['network_type']
+        network = contract['network']
+        return ERCX(address, abi, bytecode, network_type, network)
+
+class ERCX(Contract):
+    def __init__(self, address,  abi, bytecode, network_type = None, network = None):
+         super().__init__(address, network_type = network_type, network = network)
 
 class Erc20(Contract):
     def __init__(self, address,  network_type = None, network = None):

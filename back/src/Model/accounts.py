@@ -73,3 +73,8 @@ def contract_exec_function(cn, nextc):
         return cn.toret.add_error(err[1], err[2])
     err = cn.private['contract'].exec_function(name, cn.pr["kwargs"])
     return cn.call_next(nextc, err)
+
+def contract(cn, nextc):
+    id = cn.get.get('id')
+    err = cn.private['contract'].get_contract(id)
+    return cn.call_next(nextc, err)
