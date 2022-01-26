@@ -187,7 +187,7 @@ class Contract(W3):
             del contract['deployment_infos']['abi']
             if expand is False:
                 del contract['deployment_infos']['log']
-        return [True, contract, None]
+        return [True, contracts, None]
 
     def internal_get_contract(self, id):
         contract = self.red.get(id).run()
