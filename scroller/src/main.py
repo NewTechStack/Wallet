@@ -105,9 +105,9 @@ class Scroller:
         for transaction in block['transactions']:
             recei = transaction['to']
             expe = transaction['from']
-            in =  recei if  recei in self.address_list else None
-            out = expe if expe in self.address_list else None
-            if in is not None or out is not None:
+            in_t =  recei if  recei in self.address_list else None
+            out_t = expe if expe in self.address_list else None
+            if in_t is not None or out_t is not None:
                 self.transactions.insert({
                     'chain': {
                         'rpc': rpc,
@@ -115,8 +115,8 @@ class Scroller:
                         'network_type': link[2],
                         'network': link[3]
                     },
-                    'address': in if in is not None else out ,
-                    'status': 'in' if in is not None else 'out',
+                    'address': in_t if in_t is not None else out_t ,
+                    'status': 'in' if in_t is not None else 'out',
                     'date': str(datetime.datetime.utcnow()),
                     'transaction':  self.hextojson(transaction),
                     'type': 'account'
