@@ -107,7 +107,7 @@ class Scroller:
                     'transaction':  transaction,
                     'type': 'account'
                 }).run()
-        self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': latest}).run()
+        self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': block_number}).run()
 
     def start(self):
         self.init_db()
