@@ -108,7 +108,8 @@ class Scroller:
             in_t =  recei if  recei in self.address_list else None
             out_t = expe if expe in self.address_list else None
             if in_t is not None or out_t is not None:
-                self.transactions.insert({
+                transaction = self.hextojson(transaction)
+                data = {
                     'chain': {
                         'rpc': rpc,
                         'chain_id': chain_id,
@@ -118,9 +119,21 @@ class Scroller:
                     'address': in_t if in_t is not None else out_t ,
                     'status': 'in' if in_t is not None else 'out',
                     'date': str(datetime.datetime.utcnow()),
-                    'transaction':  self.hextojson(transaction),
+                    'transaction':  transaction,
                     'type': 'account'
-                }).run()
+                }
+                if out_t in self.contract_list:
+                    func = transaction['input']
+                    func = func[0:10] if len(fun) > 10 else None
+                    functions = list(self.contracts.filter((r.row["address"] == out_t)).run())
+                    functions = functions[0]['deployment_infos']
+                    functions = functions['functions']['hash']
+                    for function in functions:
+                        if function[function] == func:
+                            func = function
+                        print(function, functions['functions'], func)
+                    data['function'] = function
+                self.transactions.insert(data).run()
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
         return True
 
