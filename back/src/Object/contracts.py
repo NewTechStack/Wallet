@@ -141,7 +141,7 @@ class Contract(W3):
         simplified = {}
         hash = {}
         for func in [obj for obj in self.abi if obj['type'] == type]:
-            name = func['name']
+            name = func['name'] if 'name' in func else type
             types = [input['type'] for input in func['inputs']]
             args = [input['name'] + '(' + input['type'] + ')' for input in func['inputs']]
             signature = '{}({})'.format(name,','.join(types))
@@ -165,7 +165,7 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 6000000)
+        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 300000)
         if not ret[0]:
             return ret
         data = {
