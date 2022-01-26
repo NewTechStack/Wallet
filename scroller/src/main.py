@@ -82,17 +82,19 @@ class Scroller:
         self.address_list.append('0x781aD19FADc0482115D53ae660A76B852Ac8c276')
         print(self.address_list)
 
-    def lastchecked(self, network):
+    def lastchecked(self, chain_id, rpc):
         try:
-            lastchecked = list(self.meta.filter(r.row['network'] == network).run())
+            lastchecked = list(self.meta.filter(r.row['chain_id'] == chain_id).run())
         except:
             return False
         if len(lastchecked) == 0:
-            dict(self.meta.insert([{'network': network, 'lastchecked': latest}]).run())
+            dict(self.meta.insert([{'rpc': rpc, 'lastchecked': latest, 'chain_id': chain_id}]).run())
             return False
         return lastchecked[0]['lastchecked']
 
-    def checkblock(self, link, block_number,  network):
+    def checkblock(self, link, block_number):
+        rpc = link[1]
+        chain_id = link[0].net.Net.chainID()
         block = link[0].eth.get_block(block_number, full_transactions=True)
         for transaction in block['transactions']:
             recei = transaction['to']
@@ -101,27 +103,31 @@ class Scroller:
             address = expe if expe in self.address_list else None
             if address is not None :
                 self.transactions.insert({
-                    'chain': link[1],
+                    'chain': {
+                        'rpc': rpc,
+                        'chain_id': link[0].net.Net.chainID()
+                    },
                     'address': address,
                     'date': str(datetime.datetime.utcnow()),
-                    'transaction':  transaction,
+                    'transaction':  self.hextojson(transaction),
                     'type': 'account'
                 }).run()
-        self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': block_number}).run()
+        self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
 
     def start(self):
         self.init_db()
         while True:
             for link in self.c:
                 latest = link[0].eth.get_block('latest')['number']
-                network = link[1]
-                lastchecked = self.lastchecked(network)
+                rpc = link[1]
+                chain_id = link[0].net.Net.chainID()
+                lastchecked = self.lastchecked(chain_id, rpc)
                 if lastchecked is False:
                     continue
-                print(f"{network.ljust(25)}: from {str(lastchecked).ljust(10)} to {str(latest).ljust(10)}")
+                print(f"[{str(chain_id).ljust(10)}]: from {str(lastchecked).rjust(10, '0')} to {str(latest).ljust(10, '0')}")
                 while lastchecked < latest:
                     lastchecked += 1
-                    self.checkblock(link, lastchecked, network)
+                    self.checkblock(link, lastchecked)
             time.sleep(30)
         return
 
