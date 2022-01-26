@@ -77,8 +77,8 @@ class W3:
                     return obj.hex()
                 if isinstance(obj, decimal.Decimal):
                     return float(obj)
-                if isinstance(obj, bytes)
-                    return obj.decode("utf-8") 
+                if isinstance(obj, bytes):
+                    return obj.decode("utf-8")
                 return super().default(obj)
         return json.loads(json.dumps(dict(data), cls=HexJsonEncoder))
 
