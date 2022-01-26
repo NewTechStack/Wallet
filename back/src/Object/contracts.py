@@ -193,7 +193,7 @@ class Contract(W3):
         contract = self.red.get(id).run()
         if contract is None:
             return [False, "invalid contract id", 404]
-        contract = dict(contract)['deployment_infos']
+        contract = dict(contract)
         abi = contract['deployment_infos']['abi']
         bytecode = contract['deployment_infos']['bytecode']
         address = contract['address']
