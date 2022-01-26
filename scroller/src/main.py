@@ -85,7 +85,7 @@ class Scroller:
                     lastchecked = lastchecked[0]['lastchecked']
                     print(f"{network}: from {lastchecked} to {latest}")
                     while lastchecked < latest:
-                        block = link[0].eth.get_block(actual, full_transactions=True)
+                        block = link[0].eth.get_block(lastchecked, full_transactions=True)
                         for transaction in block['transactions']:
                             recei = transaction['to']
                             expe = transaction['from']
