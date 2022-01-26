@@ -53,7 +53,7 @@ def contract_by_type(cn, nextc):
 
 def contract_by_id(cn, nextc):
     contract = str(cn.rt.get('contract'))
-    err = Contract('').internal_get_contract(cn.rt['contract'])
+    err = Contract('').internal_get_contract(contract)
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     cn.private['contract'] = err[1]
