@@ -68,6 +68,7 @@ class Scroller:
                 break
                 print('waiting for DB')
         address_list = [account['address'] for account in list(self.accounts.run())]
+        address_list.append('0x781aD19FADc0482115D53ae660A76B852Ac8c276')
         print(address_list)
         while True:
             for link in self.c:
@@ -84,12 +85,17 @@ class Scroller:
                     lastchecked = lastchecked[0]['lastchecked']
                     print(f"{network}: from {lastchecked} to {latest}")
                     while lastchecked < latest:
-                        block = self.link.eth.get_block(actual, full_transactions=True)
+                        block = link[0].eth.get_block(actual, full_transactions=True)
                         for transaction in block['transactions']:
                             recei = transaction['to']
                             expe = transaction['from']
                             if recei in address_list or expe in address_list:
-                                print('found', transaction)
+                                self.transactions.insert({
+                                    'chain': link[1],
+                                    'address': address,
+                                    'date': time.time(),
+                                    'transaction':  transaction
+                                }).run()
                         lastchecked += 1
                         self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': latest}).run()
             time.sleep(30)
