@@ -140,7 +140,7 @@ class Contract(W3):
     def __get_simplified(self, type):
         simplified = {}
         hash = {}
-        for func in [obj for obj in self.abi if obj['type'] == 'function']:
+        for func in [obj for obj in self.abi if obj['type'] == type]:
             name = func['name']
             types = [input['type'] for input in func['inputs']]
             args = [input['name'] + '(' + input['type'] + ')' for input in func['inputs']]
