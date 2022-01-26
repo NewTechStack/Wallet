@@ -124,6 +124,7 @@ class Scroller:
                 }
                 print(recei,self.contract_list )
                 if recei in self.contract_list:
+                    func = transaction['input']
                     func = func[0:10] if len(func) > 10 else None
                     print(func)
                     functions = list(self.contracts.filter((r.row["address"] == out_t)).run())
