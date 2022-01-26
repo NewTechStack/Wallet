@@ -60,14 +60,15 @@ class Scroller:
 
     def start(self):
         while True:
-            if True:
+            try:
                 self.meta = get_conn().db("wallet").table('transactions_meta')
                 self.transactions = get_conn().db("wallet").table('transactions')
                 self.accounts = get_conn().db("wallet").table('accounts')
-
+                address_list = [account['address'] for account in list(self.accounts.run())]
                 break
                 print('waiting for DB')
-        address_list = [account['address'] for account in list(self.accounts.run())]
+            except:
+                pass
         address_list.append('0x781aD19FADc0482115D53ae660A76B852Ac8c276')
         print(address_list)
         while True:
@@ -81,7 +82,6 @@ class Scroller:
                 if len(lastchecked) == 0:
                     res = dict(self.meta.insert([{'network': network, 'lastchecked': latest}]).run())
                 else:
-
                     lastchecked = lastchecked[0]['lastchecked']
                     print(f"{network}: from {lastchecked} to {latest}")
                     while lastchecked < latest:
@@ -94,7 +94,8 @@ class Scroller:
                                     'chain': link[1],
                                     'address': address,
                                     'date': time.time(),
-                                    'transaction':  transaction
+                                    'transaction':  transaction,
+                                    'type': 'account'
                                 }).run()
                         lastchecked += 1
                         self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': latest}).run()
