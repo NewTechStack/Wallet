@@ -127,6 +127,8 @@ class Scroller:
                     except:
                         pass
                     i += 1
+                if i == 3:
+                    continue
                 lastchecked = self.lastchecked(chain_id, rpc, latest)
                 if lastchecked is False:
                     continue
