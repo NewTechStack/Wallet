@@ -137,6 +137,19 @@ class Contract(W3):
             constructor = constructor[0]['inputs']
         return [True, constructor, None]
 
+    def __get_simplified(self, type):
+        simplified = {}
+        hash = {}
+        for func in [obj for obj in self.abi if obj['type'] == 'function']:
+            name = func['name']
+            types = [input['type'] for input in func['inputs']]
+            args = [input['name'] + '(' + input['type'] + ')' for input in func['inputs']]
+            signature = '{}({})'.format(name,','.join(types))
+            simple = '{}({})'.format(name,','.join(args))
+            simplified[name] = simple
+            hash[name] = self.link.toHex(self.link.keccak(text=signature))[0:10]
+        return {"clear": simplified, "hash": hash}
+
     def deploy(self, kwargs):
         owner = self.owner()
         constructor = [i for i in self.abi if 'type' in i and i['type'] == 'constructor']
@@ -152,28 +165,16 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 300000)
+        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 6000000)
         if not ret[0]:
             return ret
-        simplified = {}
-        hash = {}
-        for func in [obj for obj in self.abi if obj['type'] == 'function']:
-            name = func['name']
-            types = [input['type'] for input in func['inputs']]
-            args = [input['name'] + '(' + input['type'] + ')' for input in func['inputs']]
-            signature = '{}({})'.format(name,','.join(types))
-            simple = '{}({})'.format(name,','.join(args))
-            simplified[name] = simple
-            hash[name] = self.link.toHex(self.link.keccak(text=signature))[0:10]
         data = {
             'deployment_infos': {
                 "log": ret[1],
                 "abi": self.abi,
                 "bytecode": self.bytecode,
-                "functions": {
-                    "clear": simplified,
-                    "hash": hash
-                }
+                "functions": self.__get_simplified('function'),
+                "constructor": self.__get_simplified('constructor')
             },
             "owner": owner.address,
             "network_type": self.network_type,
