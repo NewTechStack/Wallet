@@ -43,10 +43,10 @@ class Scroller:
                     res = dict(self.meta.insert([{'network': network, 'lastchecked': latest}]).run())
                 else:
                     lastchecked = lastchecked[0]['lastchecked']
-                print(f"{network}: from {lastchecked} to {latest}")
-                while lastchecked < latest:
-                    lastchecked += 1
-                    self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': latest}).run()
+                    print(f"{network}: from {lastchecked} to {latest}")
+                    while lastchecked < latest:
+                        lastchecked += 1
+                        self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': latest}).run()
             time.sleep(30)
         return
 
