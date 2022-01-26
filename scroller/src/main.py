@@ -126,17 +126,14 @@ class Scroller:
                 if recei in self.contract_list:
                     func = transaction['input']
                     func = func[0:10] if len(func) > 10 else None
-                    print(func)
                     functions = list(self.contracts.filter((r.row["address"] == recei)).run())
-                    print(functions)
                     functions = functions[0]['deployment_infos']
-                    print(functions)
                     functions = functions['functions']['hash']
                     print(functions)
                     for function in functions:
-                        if function[function] == func:
+                        print(function, func)
+                        if functions[function] == func:
                             func = function
-                        print(function, functions['functions'], func)
                     data['function'] = function
                 self.transactions.insert(data).run()
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
