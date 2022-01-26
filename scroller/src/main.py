@@ -122,7 +122,7 @@ class Scroller:
                     'transaction':  transaction,
                     'type': 'account'
                 }
-                print(out_t,self.contract_list )
+                print(in_t,self.contract_list )
                 if in_t in self.contract_list:
                     func = transaction['input']
                     func = func[0:10] if len(fun) > 10 else None
@@ -167,6 +167,7 @@ class Scroller:
                     continue
                 lastchecked = self.lastchecked(chain_id, rpc, latest)
                 if lastchecked is False:
+                    print(f'passing chain: {str(chain_id).ljust(10)}')
                     continue
                 print(f"[{str(chain_id).ljust(10)}]: from {str(lastchecked).rjust(10, '0')} to {str(latest).rjust(10, '0')}")
                 while lastchecked < latest:
