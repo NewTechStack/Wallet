@@ -58,49 +58,71 @@ class Scroller:
         for link in self.c:
             link[0].middleware_onion.inject(geth_poa_middleware, layer=0)
 
-    def start(self):
+    def hextojson(self, data):
+        class HexJsonEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, HexBytes):
+                    return obj.hex()
+                if isinstance(obj, decimal.Decimal):
+                    return float(obj)
+                return super().default(obj)
+        return json.loads(json.dumps(dict(data), cls=HexJsonEncoder))
+
+    def init_db(self):
         while True:
             try:
                 self.meta = get_conn().db("wallet").table('transactions_meta')
                 self.transactions = get_conn().db("wallet").table('transactions')
                 self.accounts = get_conn().db("wallet").table('accounts')
-                address_list = [account['address'] for account in list(self.accounts.run())]
+                self.address_list = [account['address'] for account in list(self.accounts.run())]
                 break
                 print('waiting for DB')
             except:
                 pass
-        address_list.append('0x781aD19FADc0482115D53ae660A76B852Ac8c276')
-        print(address_list)
+        self.address_list.append('0x781aD19FADc0482115D53ae660A76B852Ac8c276')
+        print(self.address_list)
+
+    def lastchecked(self, network):
+        try:
+            lastchecked = list(self.meta.filter(r.row['network'] == network).run())
+        except:
+            return False
+        if len(lastchecked) == 0:
+            dict(self.meta.insert([{'network': network, 'lastchecked': latest}]).run())
+            return False
+        return lastchecked[0]['lastchecked']
+
+    def checkblock(self, link, block_number,  network):
+        block = link[0].eth.get_block(block_number, full_transactions=True)
+        for transaction in block['transactions']:
+            recei = transaction['to']
+            expe = transaction['from']
+            address =  recei if  recei in self.address_list else None
+            address = expe if expe in self.address_list else None
+            if address is not None :
+                self.transactions.insert({
+                    'chain': link[1],
+                    'address': address,
+                    'date': str(datetime.datetime.utcnow()),
+                    'transaction':  transaction,
+                    'type': 'account'
+                }).run()
+        self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': latest}).run()
+
+
+    def start(self):
+        self.init_db()
         while True:
             for link in self.c:
                 latest = link[0].eth.get_block('latest')['number']
                 network = link[1]
-                try:
-                    lastchecked = list(self.meta.filter(r.row['network'] == network).run())
-                except:
+                lastchecked = self.lastchecked(network)
+                if lastchecked is False:
                     continue
-                if len(lastchecked) == 0:
-                    res = dict(self.meta.insert([{'network': network, 'lastchecked': latest}]).run())
-                else:
-                    lastchecked = lastchecked[0]['lastchecked']
-                    print(f"{network}: from {lastchecked} to {latest}")
-                    while lastchecked < latest:
-                        block = link[0].eth.get_block(lastchecked, full_transactions=True)
-                        for transaction in block['transactions']:
-                            recei = transaction['to']
-                            expe = transaction['from']
-                            address =  recei if  recei in address_list else None
-                            address = expe if expe in address_list else None
-                            if address is not None :
-                                self.transactions.insert({
-                                    'chain': link[1],
-                                    'address': address,
-                                    'date': time.time(),
-                                    'transaction':  transaction,
-                                    'type': 'account'
-                                }).run()
-                        lastchecked += 1
-                        self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': latest}).run()
+                print(f"{network.ljust(25)}: from {lastchecked.ljust(10)} to {latest.ljust(10)}")
+                while lastchecked < latest:
+                    lastchecked += 1
+                    self.checkblock(link, network)
             time.sleep(30)
         return
 
