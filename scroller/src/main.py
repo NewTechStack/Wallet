@@ -134,6 +134,35 @@ class Scroller:
                             break
                     data['function'] = func
                 self.transactions.insert(data).run()
+            in_t =  recei if  recei in self.contract_list else None
+            out_t = expe if expe in self.contract_list else None
+            if in_t is not None or out_t is not None:
+                address = in_t if in_t is not None else out_t
+                transaction = self.hextojson(transaction)
+                data = {
+                    'chain': {
+                        'rpc': rpc,
+                        'chain_id': chain_id,
+                        'network_type': link[2],
+                        'network': link[3]
+                    },
+                    'address': address ,
+                    'status': 'in' if in_t is not None else 'out',
+                    'date': str(datetime.datetime.utcnow()),
+                    'transaction':  transaction,
+                    'type': 'contract'
+                }
+                func = transaction['input']
+                func = func[0:10] if len(func) > 10 else None
+                functions = list(self.contracts.filter((r.row["address"] == address)).run())
+                functions = functions[0]['deployment_infos']
+                functions = functions['functions']['hash']
+                for function in functions:
+                    if functions[function] == func:
+                        func = function
+                        break
+                data['function'] = func
+                self.transactions.insert(data).run()
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
         return True
 
