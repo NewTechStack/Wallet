@@ -109,7 +109,6 @@ class Scroller:
                 }).run()
         self.meta.filter(r.row['network'] == link[1]).update({'lastchecked': latest}).run()
 
-
     def start(self):
         self.init_db()
         while True:
@@ -119,7 +118,7 @@ class Scroller:
                 lastchecked = self.lastchecked(network)
                 if lastchecked is False:
                     continue
-                print(f"{network.ljust(25)}: from {lastchecked.ljust(10)} to {latest.ljust(10)}")
+                print(f"{network.ljust(25)}: from {str(lastchecked).ljust(10)} to {str(latest).ljust(10)}")
                 while lastchecked < latest:
                     lastchecked += 1
                     self.checkblock(link, network)
