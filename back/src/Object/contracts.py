@@ -179,9 +179,9 @@ class Contract(W3):
         if id is not None:
             command = command.filter(r.row["id"] == id)
         contracts = command.run()
-        if contracts is None and id is not None:
-            return [False, "invalid contract id", 404]
         contracts = list(contracts)
+        if len(contracts) == 0 and id is not None:
+            return [False, "invalid contract id", 404]
         for contract in contracts:
             del contract['deployment_infos']['bytecode']
             del contract['deployment_infos']['abi']
