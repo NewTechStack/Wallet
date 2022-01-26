@@ -22,7 +22,7 @@ class W3:
         self.network_type = 'polygon' if network_type == None else network_type
         self.network = 'testnet' if network == None else network
         self.link = Web3()
-        self.unit = 'ETH' if network == 'ether' else 'MATIC' if network == 'polygon' else ''
+        self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
 
 
     def is_connected(self):
@@ -31,7 +31,6 @@ class W3:
     def connect(self, network_type = None, network = None):
         self.network_type = network_type if network_type != None else self.network_type
         self.network = network if network != None else self.network
-        print(self.network_type, self.network)
         if self.network_type not in self.networks \
             or self.network not in self.networks[self.network_type]:
             return [False, "invalid connection argument", 400]
@@ -39,7 +38,7 @@ class W3:
         self.link = Web3(Web3.HTTPProvider(provider))
         self.link.middleware_onion.inject(geth_poa_middleware, layer=0)
         self.link.eth.account.enable_unaudited_hdwallet_features()
-        self.unit = 'ETH' if network == 'ether' else 'MATIC' if network == 'polygon' else ''
+        self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
 
     def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 0):
