@@ -70,11 +70,11 @@ class Account(W3):
         if account_addr[0] is False:
             return account_addr
         account_addr = account_addr[1]['address']
-        transaction = list(self.trx.filter(
+        transactions = list(self.trx.filter(
                 (r.row["address"] ==  account_addr)
                 & (r.row["type"] ==  'account')
             ).run())
-        return [True, {'data': balance}, None]
+        return [True, {'data': transactions}, None]
 
     def token_balance(self, account_addr, contract_addr):
         contract_addr = self.link.toChecksumAddress(contract_addr)
