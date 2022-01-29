@@ -591,27 +591,27 @@ class Erc721(Contract):
                     				"type": "string"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "constructor"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "owner",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "spender",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "uint256",
                     				"name": "value",
                     				"type": "uint256"
@@ -621,10 +621,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "string",
                     				"name": "contact",
                     				"type": "string"
@@ -634,10 +634,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "address[]",
                     				"name": "shareholders",
                     				"type": "address[]"
@@ -647,10 +647,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "uint256",
                     				"name": "value",
                     				"type": "uint256"
@@ -660,22 +660,22 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "original",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "replacement",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "uint256",
                     				"name": "value",
                     				"type": "uint256"
@@ -685,10 +685,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "uint256",
                     				"name": "value",
                     				"type": "uint256"
@@ -698,10 +698,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "newRuleEngine",
                     				"type": "address"
@@ -711,10 +711,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "previousOwner",
                     				"type": "address"
@@ -724,16 +724,16 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "previousOwner",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "newOwner",
                     				"type": "address"
@@ -743,10 +743,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "address",
                     				"name": "account",
                     				"type": "address"
@@ -756,10 +756,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "account",
                     				"type": "address"
@@ -769,10 +769,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "account",
                     				"type": "address"
@@ -782,22 +782,22 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "from",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": true,
+                    				"indexed": True,
                     				"internalType": "address",
                     				"name": "to",
                     				"type": "address"
                     			},
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "uint256",
                     				"name": "value",
                     				"type": "uint256"
@@ -807,10 +807,10 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"anonymous": false,
+                    		"anonymous": False,
                     		"inputs": [
                     			{
-                    				"indexed": false,
+                    				"indexed": False,
                     				"internalType": "address",
                     				"name": "account",
                     				"type": "address"
@@ -820,7 +820,7 @@ class Erc721(Contract):
                     		"type": "event"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -830,12 +830,12 @@ class Erc721(Contract):
                     		],
                     		"name": "addPauser",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -856,12 +856,12 @@ class Erc721(Contract):
                     				"type": "uint256"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -882,12 +882,12 @@ class Erc721(Contract):
                     				"type": "bool"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -903,12 +903,12 @@ class Erc721(Contract):
                     				"type": "uint256"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -934,12 +934,12 @@ class Erc721(Contract):
                     				"type": "bool"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [],
                     		"name": "contact",
                     		"outputs": [
@@ -949,12 +949,12 @@ class Erc721(Contract):
                     				"type": "string"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [],
                     		"name": "decimals",
                     		"outputs": [
@@ -964,12 +964,12 @@ class Erc721(Contract):
                     				"type": "uint8"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -990,12 +990,12 @@ class Erc721(Contract):
                     				"type": "bool"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address[]",
@@ -1005,12 +1005,12 @@ class Erc721(Contract):
                     		],
                     		"name": "destroy",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -1036,12 +1036,12 @@ class Erc721(Contract):
                     				"type": "uint8"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -1057,12 +1057,12 @@ class Erc721(Contract):
                     				"type": "bytes"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -1083,12 +1083,12 @@ class Erc721(Contract):
                     				"type": "bool"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -1104,12 +1104,12 @@ class Erc721(Contract):
                     				"type": "bool"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "uint256",
@@ -1119,12 +1119,12 @@ class Erc721(Contract):
                     		],
                     		"name": "issue",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [
                     			{
                     				"internalType": "uint8",
@@ -1140,12 +1140,12 @@ class Erc721(Contract):
                     				"type": "string"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [],
                     		"name": "name",
                     		"outputs": [
@@ -1155,12 +1155,12 @@ class Erc721(Contract):
                     				"type": "string"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [],
                     		"name": "owner",
                     		"outputs": [
@@ -1170,21 +1170,21 @@ class Erc721(Contract):
                     				"type": "address"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [],
                     		"name": "pause",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [],
                     		"name": "paused",
                     		"outputs": [
@@ -1194,12 +1194,12 @@ class Erc721(Contract):
                     				"type": "bool"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -1214,12 +1214,12 @@ class Erc721(Contract):
                     		],
                     		"name": "reassign",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "uint256",
@@ -1229,30 +1229,30 @@ class Erc721(Contract):
                     		],
                     		"name": "redeem",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [],
                     		"name": "renounceOwnership",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [],
                     		"name": "renouncePauser",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [],
                     		"name": "ruleEngine",
                     		"outputs": [
@@ -1262,12 +1262,12 @@ class Erc721(Contract):
                     				"type": "address"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "string",
@@ -1277,12 +1277,12 @@ class Erc721(Contract):
                     		],
                     		"name": "setContact",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "bytes",
@@ -1292,12 +1292,12 @@ class Erc721(Contract):
                     		],
                     		"name": "setMyIdentity",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "contract IRuleEngine",
@@ -1307,12 +1307,12 @@ class Erc721(Contract):
                     		],
                     		"name": "setRuleEngine",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [],
                     		"name": "symbol",
                     		"outputs": [
@@ -1322,12 +1322,12 @@ class Erc721(Contract):
                     				"type": "string"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": true,
+                    		"constant": True,
                     		"inputs": [],
                     		"name": "totalSupply",
                     		"outputs": [
@@ -1337,12 +1337,12 @@ class Erc721(Contract):
                     				"type": "uint256"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "view",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -1363,12 +1363,12 @@ class Erc721(Contract):
                     				"type": "bool"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -1394,12 +1394,12 @@ class Erc721(Contract):
                     				"type": "bool"
                     			}
                     		],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [
                     			{
                     				"internalType": "address",
@@ -1409,16 +1409,16 @@ class Erc721(Contract):
                     		],
                     		"name": "transferOwnership",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	},
                     	{
-                    		"constant": false,
+                    		"constant": False,
                     		"inputs": [],
                     		"name": "unpause",
                     		"outputs": [],
-                    		"payable": false,
+                    		"payable": False,
                     		"stateMutability": "nonpayable",
                     		"type": "function"
                     	}
