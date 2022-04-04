@@ -26,7 +26,6 @@ def account_by_user(cn, nextc):
     err = Acc.get_all()
     return cn.call_next(nextc, err)
 
-
 def account_create(cn, nextc):
     err = check.contain(cn.pr, ["name"])
     if not err[0]:
