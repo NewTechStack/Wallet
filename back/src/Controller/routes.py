@@ -18,6 +18,6 @@ def setuproute(app, call):
     @app.route('/contract/<>/functions',                ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, contract_by_id, contract_get_function])  )
     @app.route('/contract/<>/transactions',             ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, contract_by_id, contract_get_transaction])  )
     @app.route('/contract/<>/<>',                       ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, contract_by_id, contract_exec_function])  )
-    @app.route('/user/<>/wallets',                      ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, account_by_user]))
+    @app.route('/user/wallets',                      ['OPTIONS', 'POST'],           lambda x = None: call([sso_verify_token, account_by_user]))
     def base():
         return
