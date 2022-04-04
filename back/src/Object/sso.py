@@ -77,6 +77,26 @@ class Sso:
         self.user = res[1]["data"]["payload"]
         return [True, {}, None]
 
+    def user_by_email(self, email):
+        """invite + get user_id"""
+        response = requests.request(
+            "POST",
+            f"{sso_back}/extern/invite",
+            headers = {
+              'Content-Type': 'application/json'
+            },
+            data = json.dumps(
+                {
+                  "email": email,
+                  "apitoken": apitoken,
+                  "secret": secret
+                }
+            )
+        )
+        data = json.loads(response.text)
+        usr_id = data['data']['usrid']
+        return [True, {'id': usr_id}, None]
+
     def __decode(self, token, get_data = False):
         url = f"{sso_back}/extern/public"
         payload = json.dumps({

@@ -14,6 +14,19 @@ def blockchain_status(cn, nextc):
     err = cn.private["account"].status()
     return cn.call_next(nextc, err)
 
+def account_by_user(cn, nextc):
+    err = check.contain(cn.pr, ["email"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    err = cn.private["sso"].user_by_email(cn.pr['email'])
+    Acc = Account(err[1]['id'])
+    wallets = Acc.get_all()[1]['wallets']
+    if len(wallets) == 0:
+        Acc.create('Base')
+    err = Acc.get_all()
+    return cn.call_next(nextc, err)
+
+
 def account_create(cn, nextc):
     err = check.contain(cn.pr, ["name"])
     if not err[0]:
