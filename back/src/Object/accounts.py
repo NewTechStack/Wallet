@@ -91,7 +91,7 @@ class Account(W3):
         contracts = list(self.ctr.run())
         ret = []
         for contract in contracts:
-            c = Contract('').internal_get_contract(contract['id'])
+            c = Contract('').internal_get_contract(contract['id'])[1]
             c.connect()
             res = c.exec_function('balanceOf', {'account': account_addr})
             print(res)
