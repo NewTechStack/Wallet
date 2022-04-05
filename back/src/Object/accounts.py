@@ -95,7 +95,7 @@ class Account(W3):
             c.connect()
             args = {'account': account_addr, 'owner': account_addr}
             res = c.exec_function('balanceOf', args)
-            ret[contract['id']] = {'address': contract['address'], res[1]['result']}
+            ret[contract['id']] = {'address': contract['address'], 'balance': res[1]['result']}
         return [True, ret, None]
 
     def __address_from_id(self, wallet_id):
