@@ -97,7 +97,7 @@ class Account(W3):
             for function in c.abi:
                 if 'type' in function and function['type'] == 'function':
                     if 'name' in function and function['name'] == 'balanceOf':
-                        if 'owner' in fucntion['inputs']:
+                        if 'owner' in function['inputs']:
                             args['owner'] = account_addr
             res = c.exec_function('balanceOf', args)
             print(res)
