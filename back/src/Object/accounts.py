@@ -89,14 +89,14 @@ class Account(W3):
     def tokens(self, account_addr):
         account_addr = self.link.toChecksumAddress(account_addr)
         contracts = list(self.ctr.run())
-        ret = []
+        ret = {}
         for contract in contracts:
             c = Contract('').internal_get_contract(contract['id'])[1]
             c.connect()
             args = {'account': account_addr, 'owner': account_addr}
             res = c.exec_function('balanceOf', args)
-            print(res)
-        return [True, {}, None]
+            ret[contract['id']] = {'address': contract['address'], res[1]['result']}
+        return [True, ret, None]
 
     def __address_from_id(self, wallet_id):
         wallets = list(self.red.filter(
