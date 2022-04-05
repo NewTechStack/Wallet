@@ -97,6 +97,7 @@ class Account(W3):
                 network=contract['network']
             )
             c.abi = contract['deployment_infos']['abi']
+            c.bytecode = contract['deployment_infos']['bytecode']
             res = c.exec_function('balanceOf', {'account': account_addr})
             print(res)
         return [True, {}, None]
