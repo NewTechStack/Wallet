@@ -93,7 +93,7 @@ class Account(W3):
         for contract in contracts:
             c = Contract('').internal_get_contract(contract['id'])[1]
             c.connect()
-            res = c.exec_function('balanceOf', {'account': account_addr})
+            res = c.exec_function('balanceOf', {'account': account_addr, 'owner': account_addr})
             print(res)
         return [True, {}, None]
 
