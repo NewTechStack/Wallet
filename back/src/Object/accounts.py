@@ -87,7 +87,7 @@ class Account(W3):
         return [True, {'contract_addr': balance}, None]
 
     def tokens(self, account_addr):
-        print(list(self.ctr.get().run()))
+        print(list(self.ctr.run()))
         return [True, {}, None]
 
     def __address_from_id(self, wallet_id):
