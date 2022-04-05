@@ -18,6 +18,7 @@ class Account(W3):
         try:
             self.red = get_conn().db("wallet").table('accounts')
             self.trx = get_conn().db("wallet").table('transactions')
+            self.ctr = get_conn().db("wallet").table('contracts')
         except:
             self.red = None
 
@@ -84,6 +85,10 @@ class Account(W3):
         contract = Erc20(contract_addr)
         balance = contract.functions.balanceOf(account_addr).call()
         return [True, {'contract_addr': balance}, None]
+
+    def tokens(self, account_addr):
+        print(list(self.ctr.get().run()))
+        return [True, {}, None]
 
     def __address_from_id(self, wallet_id):
         wallets = list(self.red.filter(

@@ -51,6 +51,13 @@ def account_transactions(cn, nextc):
     err = cn.private["account"].transactions(cn.rt["wallet"])
     return cn.call_next(nextc, err)
 
+def account_tokens(cn, nextc):
+    err = check.contain(cn.rt, ["wallet"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    err = cn.private["account"].tokens(cn.rt["wallet"])
+    return cn.call_next(nextc, err)
+
 def contract_by_type(cn, nextc):
     err = check.contain(cn.rt, ["contract"])
     if not err[0]:

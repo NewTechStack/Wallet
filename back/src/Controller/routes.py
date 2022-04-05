@@ -12,6 +12,7 @@ def setuproute(app, call):
     @app.route('/wallets',                              ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, account_load, account_all])  )
     @app.route('/wallet/<>/balance',                    ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, account_load, account_balance])  )
     @app.route('/wallet/<>/transactions',               ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, account_load, account_transactions])  )
+    @app.route('/wallet/<>/contracts',                  ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, account_load, account_tokens])  )
     @app.route('/contract',                             ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, contract])  )
     @app.route('/contract/<>/constructor',              ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, contract_by_type, contract_get_constructor])  )
     @app.route('/contract/<>/deploy',                   ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, contract_by_type, contract_exec_constructor])  )
@@ -21,3 +22,7 @@ def setuproute(app, call):
     @app.route('/user/wallets',                      ['OPTIONS', 'POST'],           lambda x = None: call([sso_verify_token, account_by_user]))
     def base():
         return
+
+
+        context = ssl.SSLContext()
+        context.verify_mode = ssl.CERT_NONE
