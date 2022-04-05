@@ -134,13 +134,15 @@ class Contract(W3):
                     keep_function = function
         if keep_function is None:
             return [False, "Invalid function name", 400]
+        elem_kwargs = []
         for elem in keep_function['inputs']:
             elem_name = elem['name']
             elem_type = elem['type']
+            elem_kwargs.append(elem['name'])
             if elem_name not in kwargs:
                 return [False, f"missing {elem_name}:{elem_type}", 400]
         contract = self.link.eth.contract(self.address, abi=self.abi)
-        transaction = contract.get_function_by_name(name)(**kwargs)
+        transaction = contract.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
         if keep_function['stateMutability'] == 'view':
             return [True, self.hextojson({'result': transaction.call()}), None]
         owner = self.owner()
