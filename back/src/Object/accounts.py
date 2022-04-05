@@ -87,7 +87,14 @@ class Account(W3):
         return [True, {'contract_addr': balance}, None]
 
     def tokens(self, account_addr):
-        print(list(self.ctr.run()))
+        account_addr = self.link.toChecksumAddress(account_addr)
+        contracts = list(self.ctr.run())
+        ret = []
+        for contract in contracts[0]:
+            c_addr = self.link.toChecksumAddress(contract['address'])
+            c = Contract(c_addr)
+            c.abi = contract['deployment_infos']['abi']
+            c.exec_function('balanceOf', {'account': account_addr})
         return [True, {}, None]
 
     def __address_from_id(self, wallet_id):
