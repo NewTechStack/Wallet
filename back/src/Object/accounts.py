@@ -91,13 +91,7 @@ class Account(W3):
         contracts = list(self.ctr.run())
         ret = []
         for contract in contracts:
-            c = Contract(
-                address=contract['address'],
-                network_type=contract['network_type'],
-                network=contract['network']
-            )
-            c.abi = contract['deployment_infos']['abi']
-            c.bytecode = contract['deployment_infos']['bytecode']
+            c = Contract('').internal_get_contract(contract['id'])
             res = c.exec_function('balanceOf', {'account': account_addr})
             print(res)
         return [True, {}, None]
