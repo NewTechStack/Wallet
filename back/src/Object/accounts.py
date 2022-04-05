@@ -93,7 +93,13 @@ class Account(W3):
         for contract in contracts:
             c = Contract('').internal_get_contract(contract['id'])[1]
             c.connect()
-            res = c.exec_function('balanceOf', {'account': account_addr, 'owner': account_addr})
+            args = {'account': account_addr}
+            for function in c.abi:
+                if 'type' in function and function['type'] == 'function':
+                    if 'name' in function and function['name'] == name:
+                        if 'owner' in fucntion['inputs']:
+                            args['owner'] = account_addr
+            res = c.exec_function('balanceOf', args)
             print(res)
         return [True, {}, None]
 
