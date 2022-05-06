@@ -1,0 +1,55 @@
+label{
+    margin-bottom: .1rem;
+}
+.custom-progress-height{
+    height: 0.3rem!important;
+}
+.login_form{
+    margin: 0 auto;
+    margin-bottom: 30px;
+    max-width: 400px;
+    font-weight: 400;
+    box-shadow: 0 5px 20px 0 rgba(0,0,0,.1);
+    border-radius: 4px;
+}
+
+.signup_form{
+    margin: 0 auto;
+    margin-bottom: 30px;
+    max-width: 786px;
+    font-weight: 400;
+    box-shadow: 0 5px 20px 0 rgba(0,0,0,.1);
+    border-radius: 4px;
+}
+
+.padding-form{
+    padding: 10px 20px 35px 20px;
+}
+
+.signup_img{
+    height: 244px;
+    width: 244px;
+    align-self: center;
+}
+
+@media (min-width: 365px){
+    .padding-form{
+        padding: 40px 60px 40px 40px;
+    }
+}
+@media (max-width: 767px){
+    .signup_img{
+        display: none;
+        visibility: hidden;
+    }
+}
+.custom-sui-input-size{
+    height:calc(1.5em + 0.9rem + 2px)!important;
+}
+
+.ui.progress{
+    margin: unset!important;
+}
+.ui.progress:first-child{
+    margin: unset!important;
+}

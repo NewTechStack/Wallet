@@ -23,7 +23,7 @@ services:
       timeout: 1s
       retries: 1
     volumes:
-      - ./front/prod/:/app
+      - ./front/build/:/app
     environment:
      VIRTUAL_HOST: wallet.${DOMAIN}
      VIRTUAL_PORT: 80
