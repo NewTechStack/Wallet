@@ -2,6 +2,7 @@ from web3 import Web3
 from web3.middleware import geth_poa_middleware
 import json
 from hexbytes import HexBytes
+import datetime
 
 try:
     from .contracts import *
@@ -11,8 +12,8 @@ except:
     pass
 
 class Account(W3):
-    def __init__(self, usr_id = -1):
-        super().__init__()
+    def __init__(self, usr_id = -1, network_type = None, network = None):
+        super().__init__(network_type = network_type, network = network)
         self.connect()
         self.usr_id = str(usr_id)
         try:
@@ -32,7 +33,7 @@ class Account(W3):
                 "address": str(acct.address),
                 "mnemonic": str(mnem),
                 "key": str(acct.key),
-                "creation_block": self.link.eth.get_block('latest')['number']
+                "date": str(datetime.datetime.utcnow())
         }
         res = dict(self.red.insert([data]).run())
         id = res["generated_keys"][0]
@@ -64,7 +65,7 @@ class Account(W3):
             return account_addr
         account_addr = account_addr[1]['address']
         balance = self.link.eth.get_balance(str(account_addr))
-        return [True, {'data': balance}, None]
+        return [True, {'data': balance, "unit": self.unit}, None]
 
     def transactions(self, id):
         account_addr = self.wallet_from_id(id)

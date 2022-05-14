@@ -17,11 +17,33 @@ class W3:
     def __init__(self, network_type = 'polygon', network = 'testnet'):
         self.networks = {
             "polygon": {
-                "mainnet": "https://polygon-rpc.com",
-                "testnet": "https://rpc-mumbai.matic.today"
+                "mainnet": {
+                    "rpc": "https://polygon-rpc.com",
+                    "explorer": {
+                        "url": "https://polygonscan.com/",
+                        "transaction": "tx",
+                        "address": "address",
+                        },
+                },
+                "testnet": {
+                    "rpc": "https://rpc-mumbai.matic.today",
+                    "explorer": {
+                        "url": "https://mumbai.polygonscan.com/",
+                        "transaction": "tx",
+                        "address": "address",
+                        }
+                }
             },
             "ether": {
-                "testnet": "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
+                "testnet": {
+                    "rpc": "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+                    "explorer": {
+                        "url": "https://ropsten.etherscan.io/",
+                        "transaction": "tx",
+                        "address": "address",
+                    }
+                }
+
             }
         }
         self.network_type = 'polygon' if network_type == None else network_type
@@ -39,7 +61,7 @@ class W3:
         if self.network_type not in self.networks \
             or self.network not in self.networks[self.network_type]:
             return [False, "invalid connection argument", 400]
-        provider = self.networks[self.network_type][self.network]
+        provider = self.networks[self.network_type][self.network]['rpc']
         self.link = Web3(Web3.HTTPProvider(provider))
         self.link.middleware_onion.inject(geth_poa_middleware, layer=0)
         self.link.eth.account.enable_unaudited_hdwallet_features()
@@ -108,9 +130,6 @@ class Contract(W3):
             self.red = None
             self.trx = None
 
-    def get_contract(self):
-        return self.link.eth.contract(self.address, abi=self.abi)
-
     def get_functions(self, id):
         contract = dict(self.red.get(id).run())
         functions = contract["deployment_infos"]["functions"]
@@ -167,11 +186,13 @@ class Contract(W3):
             hash[name] = self.link.toHex(self.link.keccak(text=signature))[0:10]
         return {"clear": simplified, "hash": hash}
 
-    def deploy(self, kwargs):
+    def deploy(self, kwargs, metadata = {}):
         owner = self.owner()
         constructor = [i for i in self.abi if 'type' in i and i['type'] == 'constructor']
         if len(constructor) == 0:
             return [False, "can't deploy that contract", 400]
+        if not isinstance(metadata, dict):
+            return [False, "Invalid metadata", 400]
         constructor = constructor[0]['inputs']
         for elem in constructor:
             name = elem['name']
@@ -193,6 +214,7 @@ class Contract(W3):
                 "functions": self.__get_simplified('function'),
                 "constructor": self.__get_simplified('constructor')
             },
+            "metadata": metadata,
             "owner": owner.address,
             "network_type": self.network_type,
             "network": self.network,

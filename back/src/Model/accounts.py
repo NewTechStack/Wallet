@@ -2,11 +2,23 @@ from Controller.basic import check
 from Object.accounts import Account
 from Object.contracts import *
 
+def load_network(cn, nextc):
+    err = check.contain(cn.rt, ["chain"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    err = check.contain(cn.rt, [cn.rt["wallet"]])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.private['network_type'] = cn.rt['chain']
+    cn.private['network'] = cn.rt[cn.rt["wallet"]]
+    err = [True, {}, None]
+    return cn.call_next(nextc, err)
+
 def account_load(cn, nextc):
     usr_id = None
     if 'sso' in cn.private:
         usr_id = cn.private["sso"].user["id"]
-    cn.private["account"] = Account(usr_id)
+    cn.private["account"] = Account(usr_id, cn.private['network_type'], cn.private['network'])
     err = [True, {}, None]
     return cn.call_next(nextc, err)
 
@@ -79,7 +91,7 @@ def contract_by_type(cn, nextc):
 
 def contract_by_id(cn, nextc):
     contract = str(cn.rt.get('contract'))
-    err = Contract('').internal_get_contract(contract)
+    err = Contract(' ', cn.private['network_type'], cn.private['network']).internal_get_contract(contract)
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     cn.private['contract'] = err[1]
@@ -93,10 +105,10 @@ def contract_get_function(cn, nextc):
     return cn.call_next(nextc, err)
 
 def contract_exec_constructor(cn, nextc):
-    err = check.contain(cn.pr, ["kwargs"])
+    err = check.contain(cn.pr, ["kwargs", "metadata"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
-    err = cn.private['contract'].deploy(cn.pr["kwargs"])
+    err = cn.private['contract'].deploy(cn.pr["kwargs"], cn.pr["metadata"])
     return cn.call_next(nextc, err)
 
 def contract_get_constructor(cn, nextc):
@@ -107,7 +119,6 @@ def contract_get_transaction(cn, nextc):
     contract = cn.rt['contract']
     err = cn.private['contract'].get_transaction(contract)
     return cn.call_next(nextc, err)
-
 
 def contract_exec_function(cn, nextc):
     name = cn.rt[cn.rt['contract']]
@@ -121,5 +132,5 @@ def contract(cn, nextc):
     id = cn.get.get('id')
     expand = cn.get.get('expand')
     expand = True if expand is not None else False
-    err = Contract('').get_contract(id, expand)
+    err = Contract(' ', cn.private['network_type'], cn.private['network']).get_contract(id, expand)
     return cn.call_next(nextc, err)
