@@ -70,6 +70,15 @@ class W3:
 
     def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 0):
         gas_cost = transaction.estimateGas({'from': owner_address})
+        gas_cost = None
+        for _ in range(3):
+            try:
+                gas_cost = transaction.estimateGas({'from': owner_address})
+                break
+            except exceptions.ContractLogicError:
+                pass
+        if gas_cost is None:
+            return [False, "Gas cost calculation error", 400]
         gas_cost = gas_cost + additionnal_gas
         gas_price = self.link.toWei(150, 'gwei')
         ether_cost = float(self.link.fromWei(gas_price * gas_cost, 'ether'))
@@ -138,7 +147,6 @@ class Contract(W3):
     def get_transaction(self, id):
         contract = dict(self.red.get(id).run())
         address = contract["address"]
-        print(address)
         transactions = list(self.trx.filter(
                 (r.row["address"] == address)
                 & (r.row["type"] == 'contract')
@@ -1451,7 +1459,3 @@ class Erc721(Contract):
 if __name__ == '__main__':
    erc = Erc721("", "ether", "testnet")
    erc.connect()
-   print(erc.status()[1]['data']['number'])
-   print(erc.is_connected())
-   # print(erc.get_functions())
-   print(erc.exec_function('balanceOf', {'owner': ''}))
