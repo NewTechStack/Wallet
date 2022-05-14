@@ -18,7 +18,10 @@ def account_load(cn, nextc):
     usr_id = None
     if 'sso' in cn.private:
         usr_id = cn.private["sso"].user["id"]
-    cn.private["account"] = Account(usr_id, cn.private['network_type'], cn.private['network'])
+    cn.private["account"] = Account(usr_id,
+        cn.private['network_type'] if 'network_type' in cn.private else None,
+        cn.private['network'] if 'network' in cn.private else None
+    )
     err = [True, {}, None]
     return cn.call_next(nextc, err)
 
