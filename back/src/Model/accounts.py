@@ -2,6 +2,10 @@ from Controller.basic import check
 from Object.accounts import Account
 from Object.contracts import *
 
+def chains(cn, nextc):
+    err = [True, W3().networks, None]
+    return cn.call_next(nextc, err)
+
 def load_network(cn, nextc):
     err = check.contain(cn.rt, ["chain"])
     if not err[0]:
