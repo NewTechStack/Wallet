@@ -153,6 +153,7 @@ def contract_cmd(cn, nextc):
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     ret = []
+    print(cn.pr)
     for cmd in cn.pr["cmd_list"]:
         ret.append(cn.private['contract'].exec_function(cmd["name"], cmd["kwargs"]))
     err = [True, {'return': ret}, None]
