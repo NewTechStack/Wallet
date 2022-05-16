@@ -111,3 +111,19 @@
     border-bottom-right-radius: 7px;
 }
 
+.truncateAddress{
+    max-width: 171px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.detailTr{
+    color: #1c94fe;
+    font-size: 0.9rem;
+    margin-top: -8px;
+    cursor: pointer;
+}
+.detailTr:hover{
+    text-decoration: underline;
+}

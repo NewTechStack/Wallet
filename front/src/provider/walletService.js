@@ -103,6 +103,15 @@ let WalletService ={
         });
     },
 
+    getContractWalletTransactions(chain1,chain2,wallet_id,contract_adr,usrtoken){
+        return fetch(endpoint+'/chain/'+chain1+'/'+chain2 +'/wallet/' + wallet_id + "/transactions?contract="+contract_adr, {
+            method: 'GET',
+            headers:this.loadHeadersToken(usrtoken),
+        }).then(response => response.json()).catch(error => {
+            console.log(error);
+        });
+    },
+
 }
 
 

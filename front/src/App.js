@@ -12,9 +12,11 @@ import Login from "./pages/auth/login"
 import PopUpLogin from "./pages/auth/popUp_login"
 import Main from "./pages/Main/Main";
 import moment from "moment";
+import 'moment/locale/fr';
 import { ToastContainer } from 'react-toastify';
 import First_Create from "./pages/FirstWallet/First_Create";
 import ExternCommand from "./pages/auth/ExternCommand";
+
 
 export default class App extends Component {
 

@@ -31,6 +31,7 @@ class login extends Component {
 
 
     state = {
+        firstLoading:true,
         loading:false,
     };
 
@@ -53,7 +54,7 @@ class login extends Component {
                     localStorage.setItem("username",decoded.payload.username)
                     localStorage.setItem("id",decoded.payload.id)
                     localStorage.setItem("roles",JSON.stringify(decoded.payload.roles))
-                    this.setState({loading:false})
+                    this.setState({firstLoading:false,loading:false})
 
                     if(this.props.history.location.search && this.props.history.location.search.trim() !== "" && this.props.history.location.search.length > 1){
                         let path = this.props.history.location.search.substring(1) + ((this.props.history.location.hash && this.props.history.location.hash.trim() !== "") ? this.props.history.location.hash :"" )
@@ -63,13 +64,17 @@ class login extends Component {
                     }
 
                 }else{
-
+                    this.setState({firstLoading:false})
                 }
 
 
-            }).catch(err => {console.log(err)})
+            }).catch(err => {
+                this.setState({firstLoading:false})
+                console.log(err)
+            })
 
         }else{
+            this.setState({firstLoading:false})
             if(this.verifSession() === true){
                 this.props.history.push("/main")
             }
@@ -101,45 +106,49 @@ class login extends Component {
 
         return (
             <>
-                <MuiBackdrop open={this.state.loading}  />
+                <MuiBackdrop open={this.state.loading || this.state.firstLoading}  />
 
-                <div className="container container-lg" style={{marginTop:120}}>
+                {
+                    this.state.firstLoading === false &&
+                    <div className="container container-lg" style={{marginTop:120}}>
 
-                    <div className="login_form">
-                        {
-                            this.state.loading === true ?
-                                <LinearProgress /> :
-                                <Progress active={false} percent={100} size="medium" className="custom-progress-height" color='blue' />
-                        }
+                        <div className="login_form">
+                            {
+                                this.state.loading === true ?
+                                    <LinearProgress /> :
+                                    <Progress active={false} percent={100} size="medium" className="custom-progress-height" color='blue' />
+                            }
 
-                        <div>
-                            <div className="padding-form" >
+                            <div>
+                                <div className="padding-form" >
 
-                                <div align="center">
-                                    <img alt="login" src={login_gif} style={{width:250,objectFit:"cover"}}/>
-                                </div>
-
-
-                                <h4 style={{fontSize:"1.4rem",marginBottom:5,marginTop:-15}}>Veuillez vous connecter !</h4>
-                                <h6 style={{fontSize:"0.9rem",marginBottom:5,color:"grey"}}>Vous pouvez vous connecter ou vous s'inscrire sur le lien suivant</h6>
-
-                                <form id="login-form" style={{maxWidth:500,alignSelf:"center"}}
-                                      onSubmit={(e) => {
-                                          e.preventDefault(); e.stopPropagation();
-                                          this.conn()
-                                      }}
-                                >
-                                    <div align="center" className="mt-5">
-                                        <Button type="submit" variant="contained" style={{textTransform:"none",marginLeft:15,fontWeight:"bold"}} color="primary">Se connecter</Button>
+                                    <div align="center">
+                                        <img alt="login" src={login_gif} style={{width:250,objectFit:"cover"}}/>
                                     </div>
-                                </form>
+
+
+                                    <h4 style={{fontSize:"1.4rem",marginBottom:5}}>Veuillez vous connecter !</h4>
+                                    <h6 style={{fontSize:"0.9rem",marginBottom:5,color:"grey"}}>Vous pouvez vous connecter ou vous s'inscrire sur le lien suivant</h6>
+
+                                    <form id="login-form" style={{maxWidth:500,alignSelf:"center"}}
+                                          onSubmit={(e) => {
+                                              e.preventDefault(); e.stopPropagation();
+                                              this.conn()
+                                          }}
+                                    >
+                                        <div align="center" className="mt-5">
+                                            <Button type="submit" variant="contained" style={{textTransform:"none",marginLeft:15,fontWeight:"bold"}} color="primary">Se connecter</Button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
+
                         </div>
 
+
                     </div>
+                }
 
-
-                </div>
             </>
         )
 

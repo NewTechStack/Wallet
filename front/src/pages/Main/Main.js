@@ -167,6 +167,7 @@ export default function Main(props) {
                                                       localStorage.removeItem("email")
                                                       localStorage.removeItem("exp")
                                                       localStorage.removeItem("id")
+                                                      localStorage.removeItem("id_conn")
                                                       window.location.reload()
                                                   })}
                                     >Déconnexion</DropdownItem>

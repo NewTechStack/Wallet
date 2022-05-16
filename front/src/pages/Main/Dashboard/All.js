@@ -24,6 +24,7 @@ import PQueue from "p-queue";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import DropdownMenu, {DropdownItem, DropdownItemGroup} from '@atlaskit/dropdown-menu';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
+import moment from "moment";
 
 const chains = [
     {
@@ -41,6 +42,7 @@ export default function All(props) {
     const [balance, setBalance] = React.useState();
     const [showContractDetails, setShowContractDetails] = React.useState(false);
     const [selected_contract, setSelected_contract] = React.useState();
+    const [selected_contract_wallet_transactions, setSelected_contract_wallet_transactions] = React.useState();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [openQrCodeModal, setOpenQrCodeModal] = React.useState(false);
 
@@ -48,7 +50,7 @@ export default function All(props) {
     const [chain, setChain] = React.useState("polygon - testnet");
 
     useEffect(() => {
-        //console.log(props)
+        console.log(props)
         get_wallets()
     }, []);
 
@@ -62,9 +64,9 @@ export default function All(props) {
 
                         setWallets(res.data.wallets)
                         setSelected_wallet(res.data.wallets[res.data.wallets.length - 1])
-                        getContracts(res.data.wallets[res.data.wallets.length - 1].address)
-
-
+                        setTimeout(() => {
+                            getContracts(res.data.wallets[res.data.wallets.length - 1])
+                        },250)
                     }
                 }
             } else {
@@ -82,10 +84,10 @@ export default function All(props) {
         })
     }
 
-    const getContracts = (wallet_adrs) => {
+    const getContracts = (wallet) => {
 
 
-        WalletService.getContracts(localStorage.getItem("usrtoken"), "polygon", "testnet", wallet_adrs).then(res => {
+        WalletService.getContracts(localStorage.getItem("usrtoken"), "polygon", "testnet", wallet.address).then(res => {
             console.log(res)
             if (res.status === 200 && res.succes === true) {
                 let objArray = [];
@@ -103,9 +105,25 @@ export default function All(props) {
                         item.metadata = result.metadata
                     }))
                 })
-                queue.addAll(calls).then(final => {
+                queue.addAll(calls).then( async final => {
                     console.log(objArray)
                     setContracts(objArray)
+                    if(props.history.location.hash && props.history.location.hash.trim() !== ""){
+                        let contract_id = props.history.location.hash.substring(1)
+                        console.log(contract_id)
+                        let find_index = objArray.findIndex(x => x.id === contract_id)
+                        if(find_index > -1){
+                            let transactions = await getContractWalletTransactions(wallet.id,objArray[find_index].data.address)
+                            console.log(transactions)
+                            if(transactions && transactions !== "false"){
+                                setSelected_contract_wallet_transactions(transactions)
+                            }else{
+                                setSelected_contract_wallet_transactions([])
+                            }
+                            setSelected_contract(objArray[find_index])
+                            setShowContractDetails(true)
+                        }
+                    }
                 }).catch(err => {
                     console.log(err)
                 })
@@ -138,6 +156,27 @@ export default function All(props) {
             }).catch(err => {
                 resolve("false")
             })
+
+        })
+    }
+
+
+
+    const getContractWalletTransactions = (wallet_id,contract_adr) => {
+
+        return new Promise(resolve => {
+
+            WalletService.getContractWalletTransactions("polygon","testnet",wallet_id,contract_adr,localStorage.getItem("usrtoken")).then( res => {
+                if (res.status === 200 && res.succes === true) {
+                    resolve(res.data.transaction || [])
+                }else{
+                    resolve("false")
+                }
+            }).catch( err => {
+                console.log(err)
+                resolve("false")
+            })
+
 
         })
     }
@@ -270,9 +309,20 @@ export default function All(props) {
                                                                 borderRadius: 7.5,
                                                                 marginBottom: 20
                                                             }}
-                                                                 onClick={() => {
-                                                                     setShowContractDetails(true)
+                                                                 onClick={async () => {
+                                                                     console.log(item)
+                                                                     setLoading(true)
+                                                                     let transactions = await getContractWalletTransactions(selected_wallet.id,item.data.address)
+                                                                     console.log(transactions)
+                                                                     if(transactions && transactions !== "false"){
+                                                                         setSelected_contract_wallet_transactions(transactions)
+                                                                     }else{
+                                                                         setSelected_contract_wallet_transactions([])
+                                                                     }
                                                                      setSelected_contract(item)
+                                                                     setShowContractDetails(true)
+                                                                     setLoading(false)
+                                                                     props.history.push("/main/dashboard/all#"+item.id)
                                                                  }}
                                                             >
                                                                 <div className="row mb-1">
@@ -280,7 +330,7 @@ export default function All(props) {
                                                                         <div style={{display: "flex"}}>
                                                                             <div style={{alignSelf: "center"}}>
                                                                                 <img alt={""}
-                                                                                     src={item.metadata ? ("data:image/png;base64," + item.metadata.img) : empty_icon}
+                                                                                     src={(item.metadata && item.metadata.img) ? ("data:image/png;base64," + item.metadata.img) : empty_icon}
                                                                                      style={{
                                                                                          width: 40,
                                                                                          height: 40,
@@ -305,6 +355,12 @@ export default function All(props) {
                                                             </div>
                                                         ))
                                                     }
+                                                    {
+                                                        contracts.length === 0 &&
+                                                            <div align="center" style={{marginTop:50,padding:10,backgroundColor:"#f0f0f0",borderRadius:7.5}}>
+                                                                <h5>Vous n'avez aucun token à afficher</h5>
+                                                            </div>
+                                                    }
                                                 </div>
                                         }
 
@@ -321,14 +377,15 @@ export default function All(props) {
                                 <KeyboardBackspaceIcon style={{marginBottom:10,cursor:"pointer"}}
                                                        fontSize={"large"}
                                     onClick={ () => {
+                                        setSelected_contract_wallet_transactions([])
                                         setShowContractDetails(false)
                                         setSelected_contract()
+                                        props.history.push("/main/dashboard/all")
                                     }}
                                 />
                             </div>
                             <div style={{
                                 padding: 15,
-                                cursor: "pointer",
                                 backgroundColor: "#f0f0f0",
                                 borderRadius: 7.5,
                                 marginBottom: 20,
@@ -340,7 +397,7 @@ export default function All(props) {
                                     <div style={{display: "flex",justifyContent:"center"}}>
                                         <div style={{alignSelf: "center"}}>
                                             <img alt={""}
-                                                 src={selected_contract.metadata ? ("data:image/png;base64," + selected_contract.metadata.img) : empty_icon}
+                                                 src={(selected_contract.metadata && selected_contract.metadata.img) ? ("data:image/png;base64," + selected_contract.metadata.img) : empty_icon}
                                                  style={{
                                                      width: 60,
                                                      height: 60,
@@ -357,11 +414,11 @@ export default function All(props) {
                                     </div>
                                     <div align="center" style={{marginTop:25}}>
                                         <h2>{selected_contract.data.balance + " tokens"}</h2>
-                                        <p style={{fontSize:"0.9rem",cursor:"pointer",textDecoration:"underline",marginTop:-10}}
+                                        <p className={"detailTr"} style={{marginTop:-10}}
                                            onClick={() => {
-                                               window.open("https://mumbai.polygonscan.com/token/" + selected_contract.data.address + "?a=" +selected_wallet.address ,"_blank")
+                                               window.open("https://mumbai.polygonscan.com/token/" + selected_contract.data.address ,"_blank")
                                            }}
-                                        >Voir</p>
+                                        >détails</p>
                                     </div>
                                     <div style={{marginTop:20,marginLeft:20}}>
                                         <h4>Description:</h4>
@@ -373,7 +430,52 @@ export default function All(props) {
                                     </div>
                                     <div style={{marginTop:35,marginLeft:20}}>
                                         <h4>Transactions:</h4>
-                                        <h6>Pas de transactions effectuées</h6>
+                                        <p className="detailTr"
+                                           onClick={() => {
+                                               window.open("https://mumbai.polygonscan.com/token/" + selected_contract.data.address + "?a=" +selected_wallet.address ,"_blank")
+                                           }}
+                                        >détails de toutes les transactions</p>
+                                        {
+                                            selected_contract_wallet_transactions && selected_contract_wallet_transactions.length > 0 ?
+                                                <div style={{marginTop:25}}>
+                                                    {
+                                                        selected_contract_wallet_transactions.map((item,key) => (
+                                                            <div key={key} className="row mt-1 mb-1">
+                                                                <div className="col-lg-3">
+                                                                    <h6>{"Le " + moment(item.date).format("DD MMMM YYYY")}</h6>
+                                                                </div>
+                                                                <div className="col-lg-4">
+                                                                    <h6>
+                                                                    {
+                                                                        item.transaction.from === selected_wallet.address ?
+                                                                            ("envoie de " + item.transaction.input_clear.amount + " tokens") :
+                                                                            ("reception de " + item.transaction.input_clear.amount + " tokens")
+                                                                    }
+                                                                    </h6>
+                                                                </div>
+                                                                <div className="col-lg-5">
+                                                                    {
+                                                                        item.transaction.from === selected_wallet.address ?
+                                                                            <div style={{display:"flex"}}>
+                                                                                <h6>{"Portfeuille: " + selected_wallet.name + " -> "}</h6>
+                                                                                <h6 className="truncateAddress" title={item.transaction.input_clear.recipient}>{item.transaction.input_clear.recipient}</h6>
+                                                                            </div> :
+                                                                            <div style={{display:"flex"}}>
+                                                                                <h6 className="truncateAddress" title={item.transaction.from}>{item.transaction.from}</h6>
+                                                                                <h6>{" -> " + "Portefeuille: " + selected_wallet.name }</h6>
+                                                                            </div>
+                                                                    }
+
+
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    }
+
+                                                </div> :
+                                                <h6>Pas de transactions effectuées</h6>
+                                        }
+
                                     </div>
                                 </div>
 
