@@ -45,6 +45,9 @@ class Account(W3):
                 (r.row["usr_id"] ==  self.usr_id)
             ).run())
         i = 0
+        if len(wallets) == 0:
+            self.create('base')
+            return self.get_all()
         while i < len(wallets):
             del wallets[i]['mnemonic']
             del wallets[i]['key']
