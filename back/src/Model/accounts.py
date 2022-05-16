@@ -10,11 +10,11 @@ def load_network(cn, nextc):
     err = check.contain(cn.rt, ["chain"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
-    err = check.contain(cn.rt, [cn.rt["wallet"]])
+    err = check.contain(cn.rt, [cn.rt["chain"]])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     cn.private['network_type'] = cn.rt['chain']
-    cn.private['network'] = cn.rt[cn.rt["wallet"]]
+    cn.private['network'] = cn.rt[cn.rt["chain"]]
     err = [True, {}, None]
     return cn.call_next(nextc, err)
 

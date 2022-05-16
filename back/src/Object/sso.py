@@ -25,16 +25,14 @@ class Sso:
             data = json.dumps(
                 {
                   "apitoken": apitoken,
-                  "asked": [
-                    "username",
-                    "email"
-                  ],
-                  "valid_until": 180
+                  "valid_until": 600,
+                  "redirect": "http://localhost:3000/login"
                 }
             )
         )
         data = json.loads(response.text)
-        if not 'data' in data:
+        if not 'data' in data or data['data'] is None:
+            print(data['error'])
             return [False, "Error connecting to sso api", 500]
         data = data['data']
         key = data["key"]

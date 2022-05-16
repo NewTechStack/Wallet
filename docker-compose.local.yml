@@ -41,6 +41,8 @@ services:
       retries: 1
     volumes:
       - ./back/src:/home/api:ro
+    environment:
+      MNEMONIC: quit comfort canal slam rare dynamic drift episode hen know sugar doctor
 
   scroller:
     build:

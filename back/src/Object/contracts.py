@@ -69,9 +69,8 @@ class W3:
         return [True, f"Connected to {provider}", None]
 
     def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 0):
-        gas_cost = transaction.estimateGas({'from': owner_address})
         gas_cost = None
-        for _ in range(3):
+        for _ in range(10):
             try:
                 gas_cost = transaction.estimateGas({'from': owner_address})
                 break
