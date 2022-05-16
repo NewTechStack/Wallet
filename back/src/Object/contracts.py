@@ -72,14 +72,14 @@ class W3:
         gas_cost = None
         for _ in range(10):
             try:
-                gas_cost = transaction.estimateGas({'from': owner_address})
+                gas_cost = transaction.estimate_gas({'from': owner_address})
                 break
             except exceptions.ContractLogicError:
                 pass
         if gas_cost is None:
             return [False, "Gas cost calculation error", 400]
         gas_cost = gas_cost + additionnal_gas
-        gas_price = self.link.toWei(150, 'gwei')
+        gas_price = transaction.generate_gas_price()
         ether_cost = float(self.link.fromWei(gas_price * gas_cost, 'ether'))
         success = False
         while success is False:
