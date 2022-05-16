@@ -139,9 +139,11 @@ class Scroller:
                         ).decode_function_input(
                             transaction['input']
                         )[1]
+
                 if len(in_param) > 0:
                     for addr in in_param:
                         data['address'] = addr
+                        data['status'] = self.define_in_ou(data['transaction']['input_clear'], addr)
                         self.transactions.insert(data).run()
                 else:
                     self.transactions.insert(data).run()
@@ -181,6 +183,14 @@ class Scroller:
                 self.transactions.insert(data).run()
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
         return True
+
+    def define_in_ou(self, inputs, addr):
+        for input in inputs:
+            if inputs[input] == addr:
+                for word in ['recipient', 'to', 'receiver']:
+                    if word in input:
+                        return 'in'
+        return 'out'
 
     def start(self):
         loop_number = 0
