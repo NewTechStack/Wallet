@@ -8,10 +8,11 @@ services:
       context: ./
       dockerfile: Dockerfile.front
       target: builder
-    container_name: build-sso
+    container_name: wallet-build
     networks:
       - build
     volumes:
       - ./front:/app/
     environment:
-      REACT_APP_ENDPOINT: https://api.sso.newtechstack.fr
+      REACT_APP_SSO_ENDPOINT: https://api.sso.newtechstack.fr
+      REACT_APP_WALLET_ENDPOINT: https://api.wallet.newtechstack.fr
