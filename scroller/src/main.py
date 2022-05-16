@@ -1,7 +1,6 @@
 import time
 import datetime
 import json
-import math
 from web3 import Web3
 from web3 import exceptions
 from hexbytes import HexBytes
