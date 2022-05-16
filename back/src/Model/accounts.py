@@ -121,7 +121,7 @@ def contract_exec_constructor(cn, nextc):
         return cn.toret.add_error(err[1], err[2])
     err = cn.private['contract'].deploy(cn.pr["kwargs"], cn.pr["metadata"])
     if err[0]:
-        err = Contract(' ', cn.private['network_type'], cn.private['network']).internal_get_contract(arr[1]['id'])
+        err = Contract(' ', cn.private['network_type'], cn.private['network']).internal_get_contract(err[1]['id'])
         cn.private['contract'] = err[1]
         cn.private['contract'].connect()
     return cn.call_next(nextc, err)
