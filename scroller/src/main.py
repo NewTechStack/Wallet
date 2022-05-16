@@ -138,7 +138,7 @@ class Scroller:
                             recei, abi=contract['deployment_infos']['abi']
                         ).decode_function_input(
                             transaction['input']
-                        )
+                        )[1]
                 if len(in_param) > 0:
                     for addr in in_param:
                         data['address'] = addr
@@ -177,7 +177,7 @@ class Scroller:
                         address, abi=contract['deployment_infos']['abi']
                     ).decode_function_input(
                         transaction['input']
-                    )
+                    )[1]
                 self.transactions.insert(data).run()
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
         return True

@@ -64,10 +64,13 @@ def account_balance(cn, nextc):
     return cn.call_next(nextc, err)
 
 def account_transactions(cn, nextc):
+    contract = cn.get["contract"] if "contract" in cn.get else None
+    page = cn.get["page"] if "page" in cn.get else 0
+    bypage = cn.get["bypage"] if "bypage" in cn.get else 1000
     err = check.contain(cn.rt, ["wallet"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
-    err = cn.private["account"].transactions(cn.rt["wallet"])
+    err = cn.private["account"].transactions(cn.rt["wallet"], contract, page, bypage)
     return cn.call_next(nextc, err)
 
 def account_tokens(cn, nextc):

@@ -67,16 +67,32 @@ class Account(W3):
         balance = self.link.eth.get_balance(str(account_addr))
         return [True, {'data': balance, "unit": self.unit}, None]
 
-    def transactions(self, id):
+    def transactions(self, id, contract, page = 1, bypage = 1000):
+        page = int(page)
+        bypage = int(bypage)
+        page = (page if page > 0 else 0)
+        bypage = (bypage if bypage > 5 else 5)
+        start = page * bypage
+        end = (page + 1) * bypage
         account_addr = self.wallet_from_id(id)
         if account_addr[0] is False:
             return account_addr
         account_addr = account_addr[1]['address']
-        transactions = list(self.trx.filter(
+        transactions = self.trx.filter(
                 (r.row["address"] ==  account_addr)
-                & (r.row["type"] ==  'account')
-            ).run())
-        return [True, {'data': transactions}, None]
+                & (r.row["type"] == 'account')
+            )
+        if contract is not None:
+            transactions = transactions.filter(
+                    (r.row["transaction"]["to"] == contract)
+                )
+        ret = list(transactions.slice(start, end).run())
+        in_search = int(transactions.count().run())
+        pagination = { "actual": page, "min": 0, "max": int(math.ceil(in_search / bypage)) - 1 }
+        if pagination['actual'] > pagination['max']:
+            return [False, "Over pagination", 404]
+        resume = {"in_search": in_search, "page": pagination}
+        return [True, {"transaction": ret, "pagination": resume}, None]
 
     def token_balance(self, account_addr, contract_addr):
         contract_addr = self.link.toChecksumAddress(contract_addr)

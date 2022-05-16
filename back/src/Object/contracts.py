@@ -72,22 +72,18 @@ class W3:
         gas_cost = None
         for _ in range(10):
             try:
-                gas_cost = transaction.estimate_gas({'from': owner_address})
+                gas_cost = transaction.estimateGas({'from': owner_address})
                 break
             except exceptions.ContractLogicError:
                 pass
         if gas_cost is None:
-            return [False, "Gas cost calculation error", 400]
-        gas_cost = gas_cost + additionnal_gas
-        gas_price = transaction.generate_gas_price()
-        ether_cost = float(self.link.fromWei(gas_price * gas_cost, 'ether'))
+            return [False, "Invalid logic", 400]
         success = False
         while success is False:
             try:
                 build = transaction.buildTransaction({
                   'from': owner_address,
-                  'gas': gas_cost,
-                  'gasPrice': gas_price,
+                  'gas': gas_cost + additionnal_gas,
                   'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
                 })
                 success = True
@@ -99,7 +95,7 @@ class W3:
         del txn_receipt['logs']
         del txn_receipt['logsBloom']
         txn_receipt = self.hextojson(txn_receipt)
-        return [True, {"transact": txn, "cost": ether_cost, 'unit': self.unit, 'return': txn_receipt}, None]
+        return [True, {"transact": txn, 'return': txn_receipt}, None]
 
     def hextojson(self, data):
         class HexJsonEncoder(json.JSONEncoder):
