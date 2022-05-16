@@ -91,6 +91,7 @@ class Sso:
             )
         )
         data = json.loads(response.text)
+        print(data)
         usr_id = data['data']['usrid']
         return [True, {'id': usr_id}, None]
 
