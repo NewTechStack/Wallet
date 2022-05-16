@@ -13,6 +13,7 @@ class Utils:
                 done2 = True
                 for i in modifier['res']:
                     # try:
+                        print(temp_json2)
                         temp_json2 = temp_json2[i]
                     # except:
                     #     done2 = False
