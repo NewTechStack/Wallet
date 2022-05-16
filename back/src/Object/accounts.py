@@ -24,12 +24,13 @@ class Account(W3):
         except:
             self.red = None
 
-    def create(self, name):
-        if self.usr_id == "-1":
+    def create(self, name, usr_id = None):
+        usr_id = usr_id if usr_id is not None else self.usr_id
+        if usr_id == "-1" or usr_id is None:
             return [False, "", 400]
         acct, mnem = self.link.eth.account.create_with_mnemonic()
         data = {
-                "usr_id": self.usr_id,
+                "usr_id": usr_id,
                 "name": name,
                 "address": str(acct.address),
                 "mnemonic": str(mnem),
@@ -40,14 +41,15 @@ class Account(W3):
         id = res["generated_keys"][0]
         return [True, {"id": id, "address": str(acct.address), "mnemonic": str(mnem)} , None]
 
-    def get_all(self):
+    def get_all(self, usr_id = None):
+        usr_id = usr_id if usr_id is not None else self.usr_id
         wallets = list(self.red.filter(
-                (r.row["usr_id"] ==  self.usr_id)
+                (r.row["usr_id"] == usr_id)
             ).run())
         i = 0
         if len(wallets) == 0:
-            self.create('base')
-            return self.get_all()
+            self.create('base', usr_id)
+            return self.get_all(usr_id)
         while i < len(wallets):
             del wallets[i]['mnemonic']
             del wallets[i]['key']

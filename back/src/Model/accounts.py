@@ -1,4 +1,5 @@
 from Controller.basic import check
+from Object.utils import Utils
 from Object.accounts import Account
 from Object.contracts import *
 
@@ -119,6 +120,8 @@ def contract_exec_constructor(cn, nextc):
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     err = cn.private['contract'].deploy(cn.pr["kwargs"], cn.pr["metadata"])
+    if err[0]:
+        cn.private['contract'] = Contract(' ', cn.private['network_type'], cn.private['network']).internal_get_contract(err[1]['id'])
     return cn.call_next(nextc, err)
 
 def contract_get_constructor(cn, nextc):
@@ -143,4 +146,33 @@ def contract(cn, nextc):
     expand = cn.get.get('expand')
     expand = True if expand is not None else False
     err = Contract(' ', cn.private['network_type'], cn.private['network']).get_contract(id, expand)
+    return cn.call_next(nextc, err)
+
+def contract_cmd(cn, nextc):
+    err = check.contain(cn.pr, ["cmd_list"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    ret = []
+    for cmd in cn.pr["cmd_list"]:
+        ret.append(cn.private['contract'].exec_function(cmd["name"], cmd["kwargs"]))
+    err = [True, {'return': ret}, None]
+    return cn.call_next(nextc, err)
+
+def email_to_address(cn, nextc):
+    err = [True, {}, None]
+    for arg in [cn.pr, cn.get]:
+        arg = Utils.json_email_replace(
+            arg,
+            [
+                {
+                    "func": cn.private["sso"].user_by_email,
+                    "res": [1, 'id']
+                },
+                {
+                    "func": Account().get_all,
+                    "res": [1, 0, 'address']
+                }
+            ]
+
+        )
     return cn.call_next(nextc, err)

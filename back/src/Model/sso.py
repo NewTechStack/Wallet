@@ -24,5 +24,5 @@ def sso_user_by_email(cn, nextc):
     err = check.contain(cn.pr, ["email"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
-    err = cn.private["sso"].user_by_email(cn.pr["usrtoken"])
+    err = cn.private["sso"].user_by_email(cn.pr["email"])
     return cn.call_next(nextc, err)
