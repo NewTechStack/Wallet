@@ -79,7 +79,7 @@ class Sso:
         """invite + get user_id"""
         response = requests.request(
             "POST",
-            f"{sso_back}/extern/invite",
+            f"{sso_back}/extern/user/invite",
             headers = {
               'Content-Type': 'application/json'
             },
@@ -91,7 +91,6 @@ class Sso:
             )
         )
         data = json.loads(response.text)
-        print(data)
         usr_id = data['data']['usrid']
         return [True, {'id': usr_id}, None]
 
