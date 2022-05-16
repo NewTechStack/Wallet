@@ -82,6 +82,8 @@ class Account(W3):
         transactions = self.trx.filter(
                 (r.row["address"] ==  account_addr)
                 & (r.row["type"] == 'account')
+                & (r.row["chain"]["network_type"] == self.network_type)
+                & (r.row["chain"]["network"] == self.network)
             )
         if contract is not None:
             transactions = transactions.filter(
