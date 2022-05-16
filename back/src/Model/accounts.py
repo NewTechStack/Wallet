@@ -121,7 +121,9 @@ def contract_exec_constructor(cn, nextc):
         return cn.toret.add_error(err[1], err[2])
     err = cn.private['contract'].deploy(cn.pr["kwargs"], cn.pr["metadata"])
     if err[0]:
-        cn.private['contract'] = Contract(' ', cn.private['network_type'], cn.private['network'])
+        err = Contract(' ', cn.private['network_type'], cn.private['network']).internal_get_contract(arr[1]['id'])
+        cn.private['contract'] = err[1]
+        cn.private['contract'].connect()
     return cn.call_next(nextc, err)
 
 def contract_get_constructor(cn, nextc):
@@ -171,7 +173,7 @@ def email_to_address(cn, nextc):
                 },
                 {
                     "func": Account().get_all,
-                    "res": [1, 0, 'address']
+                    "res": [1, 'wallets', 0, 'address']
                 }
             ]
 
