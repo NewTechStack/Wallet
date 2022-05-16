@@ -89,7 +89,7 @@ class Account(W3):
             transactions = transactions.filter(
                     (r.row["transaction"]["to"] == contract)
                 )
-        ret = list(transactions.slice(start, end).run())
+        ret = list(transactions.order_by(r.desc(r.row['date'])).slice(start, end).run())
         in_search = int(transactions.count().run())
         pagination = { "actual": page, "min": 0, "max": int(math.ceil(in_search / bypage)) - 1 }
         if pagination['actual'] > pagination['max']:
