@@ -79,8 +79,8 @@ class Scroller:
                 self.transactions = get_conn().db("wallet").table('transactions')
                 self.accounts = get_conn().db("wallet").table('accounts')
                 self.contracts = get_conn().db("wallet").table('contracts')
-                self.address_list = [account['address'] for account in list(self.accounts.run())]
-                self.contract_list = [contract['address'] for contract in list(self.contracts.run())]
+                self.address_list = [account['address'] for account in list(self.accounts.with_fields('address').run())]
+                self.contract_list = [contract['address'] for contract in list(self.contracts.with_fields('address').run())]
                 break
             except:
                 pass
@@ -126,7 +126,7 @@ class Scroller:
                 if recei in self.contract_list:
                     func = transaction['input']
                     func = func[0:10] if len(func) > 10 else None
-                    contract = list(self.contracts.filter((r.row["address"] == recei)).run())[0]
+                    contract = list(self.contracts.filter((r.row["address"] == recei)).with_fields('deployment_infos').run())[0]
                     functions = contract['deployment_infos']
                     functions = functions['functions']['hash']
                     for function in functions:
@@ -165,7 +165,7 @@ class Scroller:
                 }
                 func = transaction['input']
                 func = func[0:10] if len(func) > 10 else None
-                contract = list(self.contracts.filter((r.row["address"] == address)).run())[0]
+                contract = list(self.contracts.filter((r.row["address"] == address)).with_fields('deployment_infos').run())[0]
                 functions = contract['deployment_infos']
                 functions = functions['functions']['hash']
                 for function in functions:
