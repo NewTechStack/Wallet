@@ -87,7 +87,6 @@ class Sso:
                 {
                   "email": email,
                   "apitoken": apitoken,
-                  "secret": secret
                 }
             )
         )
