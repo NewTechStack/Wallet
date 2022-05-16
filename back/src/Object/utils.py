@@ -7,16 +7,15 @@ class Utils:
             done1 = True
             temp_json1 = json
             for modifier in modifiers:
-                json = modifier['func'](json)
+                temp_json1 = modifier['func'](json)
                 temp_json2 = temp_json1
                 done2 = True
                 for i in modifier['res']:
-                    # try:
-                        print(temp_json2, i)
+                    try:
                         temp_json2 = temp_json2[i]
-                    # except:
-                    #     done2 = False
-                    #     break
+                    except:
+                        done2 = False
+                        break
                 if not done2:
                     done1 = False
                     break
