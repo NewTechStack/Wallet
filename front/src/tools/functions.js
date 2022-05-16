@@ -1,3 +1,5 @@
+import moment from "moment";
+
 function exportOrdersToCSVFile( items, fileTitle) {
     var jsonObject = JSON.stringify(items);
 
@@ -38,4 +40,8 @@ function convertToCSV(objArray) {
     return str;
 }
 
-export {exportOrdersToCSVFile,convertToCSV}
+function verifSession(){
+    return !(localStorage.getItem("usrtoken") === null || localStorage.getItem("usrtoken") === undefined || parseInt(localStorage.getItem("exp")) < moment().unix());
+}
+
+export {exportOrdersToCSVFile,convertToCSV,verifSession}

@@ -1,5 +1,6 @@
 const endpoint = process.env.REACT_APP_WALLET_ENDPOINT;
 
+
 let WalletService ={
 
     loadHeaders() {
@@ -45,8 +46,8 @@ let WalletService ={
         });
     },
 
-    get_wallet_balance(usrtoken,wallet_id,){
-        return fetch(endpoint+'/wallet/' + wallet_id + '/balance', {
+    get_wallet_balance(usrtoken,chain1,chain2,wallet_id,){
+        return fetch(endpoint+'/chain/'+chain1+'/'+chain2 +'/wallet/' + wallet_id + '/balance', {
             method: 'GET',
             headers:this.loadHeadersToken(usrtoken),
         }).then(response => response.json()).catch(error => {
@@ -54,8 +55,8 @@ let WalletService ={
         });
     },
 
-    get_wallet_contract_balance(usrtoken,wallet_id,contract_id){
-        return fetch(endpoint+'/wallet/' + wallet_id + '/contract/' + contract_id + '/balance', {
+    get_wallet_contract_balance(chain1,chain2,usrtoken,wallet_id,contract_id){
+        return fetch(endpoint+'/chain/'+chain1+'/'+chain2 +'/wallet/' + wallet_id + '/contract/' + contract_id + '/balance', {
             method: 'GET',
             headers:this.loadHeadersToken(usrtoken),
         }).then(response => response.json()).catch(error => {
@@ -63,17 +64,17 @@ let WalletService ={
         });
     },
 
-    getContracts(wallet_adrs){
-        return fetch(endpoint+'/wallet/' + wallet_adrs + '/contracts', {
+    getContracts(usrtoken,chain1,chain2,wallet_adrs){
+        return fetch(endpoint+'/chain/'+chain1+'/'+chain2 +'/wallet/' + wallet_adrs + '/contracts', {
             method: 'GET',
-            headers:this.loadHeaders(),
+            headers:this.loadHeadersToken(usrtoken),
         }).then(response => response.json()).catch(error => {
             console.log(error);
         });
     },
 
-    getContractName(contract_id,data,usrtoken){
-        return fetch(endpoint+'/contract/' + contract_id + '/name', {
+    getContractName(chain1,chain2,contract_id,data,usrtoken){
+        return fetch(endpoint+'/chain/'+chain1+'/'+chain2 +'/contract/' + contract_id + '/name', {
             method: 'POST',
             body:JSON.stringify(data),
             headers:this.loadHeadersToken(usrtoken),
@@ -83,10 +84,19 @@ let WalletService ={
     },
 
 
-    getContractSymbol(contract_id,data,usrtoken){
-        return fetch(endpoint+'/contract/' + contract_id + '/symbol', {
+    getContractSymbol(chain1,chain2,contract_id,data,usrtoken){
+        return fetch(endpoint+'/chain/'+chain1+'/'+chain2 +'/contract/' + contract_id + '/symbol', {
             method: 'POST',
             body:JSON.stringify(data),
+            headers:this.loadHeadersToken(usrtoken),
+        }).then(response => response.json()).catch(error => {
+            console.log(error);
+        });
+    },
+
+    getContractData(chain1,chain2,contract_id,usrtoken){
+        return fetch(endpoint+'/chain/'+chain1+'/'+chain2 +'/contract?id=' + contract_id, {
+            method: 'GET',
             headers:this.loadHeadersToken(usrtoken),
         }).then(response => response.json()).catch(error => {
             console.log(error);

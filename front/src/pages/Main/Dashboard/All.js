@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, {useEffect} from "react";
 import MuiBackdrop from "../../../components/Loading/MuiBackdrop";
 import {Card, CardBody} from "reactstrap";
 import {textTitleColor} from "../../../constants/defaultValues";
@@ -7,6 +7,8 @@ import AddIcon from "@material-ui/icons/Add";
 import WalletService from "../../../provider/walletService";
 import {toast} from "react-toastify";
 import polygon_icon from "../../../assets/icons/polygon.png"
+import empty_icon from "../../../assets/icons/empty_icon2.png"
+import wallet_icon from "../../../assets/icons/wallet_icon_1.png"
 import InlineDialog from '@atlaskit/inline-dialog';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
@@ -20,54 +22,59 @@ import Modal, {
 import QRCode from "react-qr-code";
 import PQueue from "p-queue";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import DropdownMenu, {DropdownItem, DropdownItemGroup} from '@atlaskit/dropdown-menu';
+import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 
+const chains = [
+    {
+        id: 0,
+        title: "polygon - testnet"
+    }
+]
 
 export default function All(props) {
 
     const [loading, setLoading] = React.useState(false);
-    const [wallet, setWallet] = React.useState();
+    const [wallets, setWallets] = React.useState();
+    const [selected_wallet, setSelected_wallet] = React.useState();
     const [contracts, setContracts] = React.useState();
     const [balance, setBalance] = React.useState();
+    const [showContractDetails, setShowContractDetails] = React.useState(false);
+    const [selected_contract, setSelected_contract] = React.useState();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [openQrCodeModal, setOpenQrCodeModal] = React.useState(false);
 
+
+    const [chain, setChain] = React.useState("polygon - testnet");
+
     useEffect(() => {
+        //console.log(props)
         get_wallets()
     }, []);
 
     const get_wallets = () => {
-        WalletService.get_wallets(localStorage.getItem("usrtoken")).then( res => {
-            console.log(res)
-            if(res.status === 200 && res.succes === true){
-                if(res.data && res.data.wallets){
-                    if(res.data.wallets.length > 0){
 
+        WalletService.get_wallets(localStorage.getItem("usrtoken")).then(res => {
+            console.log(res)
+            if (res.status === 200 && res.succes === true) {
+                if (res.data && res.data.wallets) {
+                    if (res.data.wallets.length > 0) {
+
+                        setWallets(res.data.wallets)
+                        setSelected_wallet(res.data.wallets[res.data.wallets.length - 1])
                         getContracts(res.data.wallets[res.data.wallets.length - 1].address)
-                        WalletService.get_wallet_balance(localStorage.getItem("usrtoken"),res.data.wallets[res.data.wallets.length - 1].id).then( balanceRes => {
-                            console.log(balanceRes)
-                            if(balanceRes.status === 200 && balanceRes.succes === true){
-                                setLoading(false)
-                                setWallet(res.data.wallets[res.data.wallets.length - 1])
-                                setBalance(balanceRes.data.data === 0 ? 0 : balanceRes.data.data / 1000000000000000000 )
-                            }else{
-                                console.log(balanceRes.error)
-                                toast.error(balanceRes.error, {
-                                    position: toast.POSITION.TOP_RIGHT
-                                });
-                            }
-                        }).catch( err => {
-                            console.log(err)
-                        })
+
+
                     }
                 }
-            }else{
+            } else {
                 console.log(res.error)
                 toast.error(res.error, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
 
-        }).catch( err => {
+        }).catch(err => {
             console.log(err)
             toast.error("Une erreur est survenue", {
                 position: toast.POSITION.TOP_RIGHT
@@ -76,9 +83,11 @@ export default function All(props) {
     }
 
     const getContracts = (wallet_adrs) => {
-        WalletService.getContracts(wallet_adrs).then( res => {
 
-            if(res.status === 200 && res.succes === true){
+
+        WalletService.getContracts(localStorage.getItem("usrtoken"), "polygon", "testnet", wallet_adrs).then(res => {
+            console.log(res)
+            if (res.status === 200 && res.succes === true) {
                 let objArray = [];
                 Object.keys(res.data).forEach(key => objArray.push({
                     id: key,
@@ -87,32 +96,51 @@ export default function All(props) {
 
                 let queue = new PQueue({concurrency: 1});
                 let calls = [];
-                objArray.map( item => {
-                    calls.push(
-                        () => WalletService.getContractName(item.id,{kwargs:{}},localStorage.getItem("usrtoken")).then( r1 => {
-                            item.data.name = r1.data.result
-                            WalletService.getContractSymbol(item.id,{kwargs:{}},localStorage.getItem("usrtoken")).then( r2 => {
-                                item.data.symbol = r2.data.result
-                            })
-                        })
-                    )
+                objArray.map(item => {
+                    calls.push(() => getContractDetails(item.id).then(result => {
+                        item.data.name = result.name
+                        item.data.symbol = result.symbol
+                        item.metadata = result.metadata
+                    }))
                 })
-                queue.addAll(calls).then( final => {
-                    setContracts(objArray)
+                queue.addAll(calls).then(final => {
                     console.log(objArray)
-
+                    setContracts(objArray)
                 }).catch(err => {
                     console.log(err)
                 })
 
-            }else{
+            } else {
 
             }
-        }).catch( err => {
+        }).catch(err => {
             console.log(err)
         })
     }
 
+
+    const getContractDetails = (contract_id) => {
+        return new Promise(resolve => {
+            let data = {}
+            WalletService.getContractData("polygon", "testnet", contract_id, localStorage.getItem("usrtoken")).then(r0 => {
+                if (r0.data && Array.isArray(r0.data) && r0.data.length > 0 && r0.data[0].metadata) data.metadata = r0.data[0].metadata
+                WalletService.getContractName("polygon", "testnet", contract_id, {kwargs: {}}, localStorage.getItem("usrtoken")).then(r1 => {
+                    data.name = r1.data.result
+                    WalletService.getContractSymbol("polygon", "testnet", contract_id, {kwargs: {}}, localStorage.getItem("usrtoken")).then(r2 => {
+                        data.symbol = r2.data.result
+                        resolve(data)
+                    }).catch(err => {
+                        resolve("false")
+                    })
+                }).catch(err => {
+                    resolve("false")
+                })
+            }).catch(err => {
+                resolve("false")
+            })
+
+        })
+    }
 
     const onQrCodeDownload = () => {
         const svg = document.getElementById("QRCode");
@@ -137,8 +165,225 @@ export default function All(props) {
         <>
             <MuiBackdrop open={loading}/>
 
-            <div className="container-fluid" style={{marginTop: 60, marginLeft: 15}}>
-                <div className="row mb-4">
+            <div className="container-fluid" style={{marginTop: 60, marginLeft: 20, marginRight: 20}}>
+
+                {
+                    wallets && wallets.length > 0 && selected_wallet &&
+                    <div className="row mb-3">
+                        <div className="col-lg-12 mb-2">
+                            <Card style={{backgroundColor: "#fff", border: "unset", marginRight: 30}}>
+                                <CardBody>
+                                    <div style={{display: "flex", justifyContent: "space-between", cursor: "pointer"}}>
+                                        <div style={{alignSelf: "center"}}>
+                                            <div style={{marginLeft: 5, alignSelf: "center"}}>
+                                                <DropdownMenu
+                                                    trigger={({triggerRef, ...props}) => (
+                                                        <h4
+                                                            {...props}
+                                                            ref={triggerRef}
+                                                        >Portefeuille: {selected_wallet.name}
+                                                        </h4>
+                                                    )}
+                                                >
+                                                    <DropdownItemGroup>
+                                                        {
+                                                            wallets.map((item, key) => (
+                                                                <DropdownItem testId={key}
+                                                                              isDisabled={true}
+                                                                              onClick={() => {
+                                                                                  console.log(item)
+                                                                                  /*setContracts()
+                                                                                  setSelected_wallet(item)
+                                                                                  getContracts(item.address)*/
+                                                                              }}
+                                                                >
+                                                                    {item.name}
+                                                                </DropdownItem>
+                                                            ))
+                                                        }
+                                                    </DropdownItemGroup>
+                                                </DropdownMenu>
+                                            </div>
+
+
+                                        </div>
+
+                                        <div>
+                                            <div style={{display: "flex", cursor: "pointer"}}>
+                                                <img alt={""} src={polygon_icon}
+                                                     style={{height: 30, width: 30, alignSelf: "center"}}/>
+                                                <div style={{marginLeft: 5, alignSelf: "center"}}>
+                                                    <DropdownMenu
+                                                        trigger={({triggerRef, ...props}) => (
+                                                            <h4
+                                                                {...props}
+                                                                ref={triggerRef}
+                                                            >Polygon - testnet
+                                                            </h4>
+                                                        )}
+                                                    >
+                                                        <DropdownItemGroup>
+                                                            {
+                                                                chains.map((item, key) => (
+                                                                    <DropdownItem testId={item.id}
+                                                                    >
+                                                                        {item.title}
+                                                                    </DropdownItem>
+                                                                ))
+                                                            }
+                                                        </DropdownItemGroup>
+                                                    </DropdownMenu>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </CardBody>
+                            </Card>
+                        </div>
+                    </div>
+                }
+
+                {
+                    wallets && wallets.length > 0 &&
+                    showContractDetails === false ?
+
+                        <div className="row mb-4">
+                            <div className="col-lg-12 mb-2">
+                                <Card style={{backgroundColor: "#fff", border: "unset", marginRight: 30}}>
+                                    <CardBody>
+                                        <h4>Mes tokens</h4>
+
+                                        {
+                                            !contracts ?
+                                                <div align="center" style={{marginTop: 50}}>
+                                                    <CircularProgress size={30}/>
+                                                </div> :
+                                                <div>
+                                                    {
+                                                        contracts.map((item, key) => (
+                                                            <div key={key} style={{
+                                                                padding: 15,
+                                                                cursor: "pointer",
+                                                                backgroundColor: "#f0f0f0",
+                                                                borderRadius: 7.5,
+                                                                marginBottom: 20
+                                                            }}
+                                                                 onClick={() => {
+                                                                     setShowContractDetails(true)
+                                                                     setSelected_contract(item)
+                                                                 }}
+                                                            >
+                                                                <div className="row mb-1">
+                                                                    <div className="col-lg-8 mb-1">
+                                                                        <div style={{display: "flex"}}>
+                                                                            <div style={{alignSelf: "center"}}>
+                                                                                <img alt={""}
+                                                                                     src={item.metadata ? ("data:image/png;base64," + item.metadata.img) : empty_icon}
+                                                                                     style={{
+                                                                                         width: 40,
+                                                                                         height: 40,
+                                                                                         borderRadius: "50%"
+                                                                                     }}/>
+                                                                            </div>
+                                                                            <div style={{
+                                                                                alignSelf: "center",
+                                                                                marginLeft: 10
+                                                                            }}>
+                                                                                <h5>{item.data.symbol}</h5>
+                                                                                <p style={{marginTop: -10}}>{item.data.name}</p>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <div align="center" className="col-lg-4 mb-1"
+                                                                         style={{alignSelf: "center"}}>
+                                                                        <h5>{item.data.balance + " tokens"}</h5>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    }
+                                                </div>
+                                        }
+
+                                    </CardBody>
+                                </Card>
+                            </div>
+                        </div>
+
+                        :
+
+                        selected_contract &&
+                        <div>
+                            <div align="left">
+                                <KeyboardBackspaceIcon style={{marginBottom:10,cursor:"pointer"}}
+                                                       fontSize={"large"}
+                                    onClick={ () => {
+                                        setShowContractDetails(false)
+                                        setSelected_contract()
+                                    }}
+                                />
+                            </div>
+                            <div style={{
+                                padding: 15,
+                                cursor: "pointer",
+                                backgroundColor: "#f0f0f0",
+                                borderRadius: 7.5,
+                                marginBottom: 20,
+                                marginRight:30
+                            }}
+                            >
+
+                                <div style={{marginTop:10}}>
+                                    <div style={{display: "flex",justifyContent:"center"}}>
+                                        <div style={{alignSelf: "center"}}>
+                                            <img alt={""}
+                                                 src={selected_contract.metadata ? ("data:image/png;base64," + selected_contract.metadata.img) : empty_icon}
+                                                 style={{
+                                                     width: 60,
+                                                     height: 60,
+                                                     borderRadius: "50%"
+                                                 }}/>
+                                        </div>
+                                        <div style={{
+                                            alignSelf: "center",
+                                            marginLeft: 10
+                                        }}>
+                                            <h5>{selected_contract.data.symbol}</h5>
+                                            <p style={{marginTop: -10}}>{selected_contract.data.name}</p>
+                                        </div>
+                                    </div>
+                                    <div align="center" style={{marginTop:25}}>
+                                        <h2>{selected_contract.data.balance + " tokens"}</h2>
+                                        <p style={{fontSize:"0.9rem",cursor:"pointer",textDecoration:"underline",marginTop:-10}}
+                                           onClick={() => {
+                                               window.open("https://mumbai.polygonscan.com/token/" + selected_contract.data.address + "?a=" +selected_wallet.address ,"_blank")
+                                           }}
+                                        >Voir</p>
+                                    </div>
+                                    <div style={{marginTop:20,marginLeft:20}}>
+                                        <h4>Description:</h4>
+                                        <h6>
+                                            {
+                                                (selected_contract.metadata && selected_contract.metadata.desc) ? selected_contract.metadata.desc : "Pas de description"
+                                            }
+                                        </h6>
+                                    </div>
+                                    <div style={{marginTop:35,marginLeft:20}}>
+                                        <h4>Transactions:</h4>
+                                        <h6>Pas de transactions effectuées</h6>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                }
+
+
+                {/*<div className="row mb-4">
                     <div className="col-lg-12 mb-2">
                         <Card>
                             <CardBody>
@@ -201,9 +446,9 @@ export default function All(props) {
                             </CardBody>
                         </Card>
                     </div>
-                </div>
+                </div>*/}
 
-                <div className="row mb-3">
+                {/*<div className="row mb-3">
                     <div className="col-lg-12 mb-2">
                         <Card>
                             <CardBody>
@@ -270,53 +515,56 @@ export default function All(props) {
                             </CardBody>
                         </Card>
                     </div>
-                </div>
+                </div>*/}
             </div>
 
-            <ModalTransition>
+            {/*<ModalTransition>
                 {openQrCodeModal && (
-                    <Modal onClose={() => {setOpenQrCodeModal(false)}} width="small">
-                        <div align="center" style={{marginTop:15,marginBottom:10}}>
+                    <Modal onClose={() => {
+                        setOpenQrCodeModal(false)
+                    }} width="small">
+                        <div align="center" style={{marginTop: 15, marginBottom: 10}}>
                             <h2>{wallet ? wallet.name : ""}</h2>
                         </div>
                         <ModalBody>
-                            <div style={{textAlign:"center"}}>
+                            <div style={{textAlign: "center"}}>
                                 {
                                     wallet.address &&
-                                        <div>
-                                            <QRCode id="QRCode" value={wallet.address} level="M" size={150} title={wallet.name}/>
-                                            <br/>
-                                            <Button appearance="link"
-                                                    onClick={() => {
-                                                        onQrCodeDownload()
-                                                    }}
-                                                    style={{marginTop:5}}
-                                            >
-                                                Télécharger
-                                            </Button>
-                                            <br/>
-                                            <Button appearance="link"
-                                                    onClick={() => {
-                                                        console.log(wallet.address)
-                                                        window.open("https://mumbai.polygonscan.com/address/" + wallet.address + "#tokentxns","_blank")
-                                                    }}
-                                            >
-                                                Voir sur polygonscan.com
-                                            </Button>
-                                        </div>
+                                    <div>
+                                        <QRCode id="QRCode" value={wallet.address} level="M" size={150}
+                                                title={wallet.name}/>
+                                        <br/>
+                                        <Button appearance="link"
+                                                onClick={() => {
+                                                    onQrCodeDownload()
+                                                }}
+                                                style={{marginTop: 5}}
+                                        >
+                                            Télécharger
+                                        </Button>
+                                        <br/>
+                                        <Button appearance="link"
+                                                onClick={() => {
+                                                    console.log(wallet.address)
+                                                    window.open("https://mumbai.polygonscan.com/address/" + wallet.address + "#tokentxns", "_blank")
+                                                }}
+                                        >
+                                            Voir sur polygonscan.com
+                                        </Button>
+                                    </div>
 
                                 }
                             </div>
                         </ModalBody>
-                        {/*<ModalFooter>
+                        <ModalFooter>
                             <Button appearance="subtle">Skip</Button>
                             <Button appearance="primary" onClick={closeModal} autoFocus>
                                 Get started
                             </Button>
-                        </ModalFooter>*/}
+                        </ModalFooter>
                     </Modal>
                 )}
-            </ModalTransition>
+            </ModalTransition>*/}
 
         </>
     )

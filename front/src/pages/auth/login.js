@@ -37,8 +37,42 @@ class login extends Component {
 
     componentDidMount() {
         /*this.props.history.push("/main")*/
-        if(this.verifSession() === true){
-            this.props.history.push("/main")
+        console.log(localStorage.getItem("id_conn") )
+
+        if(localStorage.getItem("id_conn") && localStorage.getItem("id_conn") !== undefined && localStorage.getItem("id_conn") !== "" ){
+
+            extern_sso_service.conn(localStorage.getItem("id_conn")).then( connRes => {
+
+                if(connRes && connRes.data){
+
+                    var decoded = jwt_decode(connRes.data.usrtoken);
+                    console.log(decoded)
+                    localStorage.setItem("usrtoken",connRes.data.usrtoken)
+                    localStorage.setItem("exp",decoded.exp)
+                    localStorage.setItem("email",decoded.payload.email)
+                    localStorage.setItem("username",decoded.payload.username)
+                    localStorage.setItem("id",decoded.payload.id)
+                    localStorage.setItem("roles",JSON.stringify(decoded.payload.roles))
+                    this.setState({loading:false})
+
+                    if(this.props.history.location.search && this.props.history.location.search.trim() !== "" && this.props.history.location.search.length > 1){
+                        let path = this.props.history.location.search.substring(1) + ((this.props.history.location.hash && this.props.history.location.hash.trim() !== "") ? this.props.history.location.hash :"" )
+                        this.props.history.push(path)
+                    }else{
+                        this.props.history.push("/main")
+                    }
+
+                }else{
+
+                }
+
+
+            }).catch(err => {console.log(err)})
+
+        }else{
+            if(this.verifSession() === true){
+                this.props.history.push("/main")
+            }
         }
     }
 
@@ -49,75 +83,18 @@ class login extends Component {
 
     conn(){
         this.setState({loading:true})
-        setTimeout(() => {
+        extern_sso_service.sso().then( res => {
+            console.log(res)
+            if(res.status === 200 && res.succes === true){
 
-            extern_sso_service.sso().then( res => {
-                if(res.status === 200 && res.succes === true){
-
-                    var newWindow = window.open(res.data.url, "Login", 'scrollbars=yes, width=' + popup_w + ', height=' + popup_h + ', top=' + top + ', left=' + left);
-                    if (window && window.focus) {
-                        newWindow.focus();
-                    }
-
-                    extern_sso_service.conn(res.data.id).then( connRes => {
-
-                        console.log(connRes)
-                        if(connRes && connRes.data){
-
-                            var decoded = jwt_decode(connRes.data.usrtoken);
-                            console.log(decoded)
-                            localStorage.setItem("usrtoken",connRes.data.usrtoken)
-                            localStorage.setItem("exp",decoded.exp)
-                            localStorage.setItem("email",decoded.payload.email)
-                            localStorage.setItem("username",decoded.payload.username)
-                            localStorage.setItem("id",decoded.payload.id)
-                            localStorage.setItem("roles",JSON.stringify(decoded.payload.roles))
-                            this.setState({loading:false})
-                            newWindow.close()
-
-                            WalletService.get_wallets(connRes.data.usrtoken).then( res => {
-
-                                console.log(res)
-                                if(res.status === 200 && res.succes === true){
-                                    if(res.data && res.data.wallets){
-
-                                        if(res.data.wallets.length === 0){
-                                            this.props.history.push("/create_wallet");
-                                        }else{
-                                            this.props.history.push("/main");
-                                        }
-
-                                    }else{
-                                        console.log("Une erreur est survenue")
-                                    }
-
-                                }else{
-                                    console.log(res.error)
-                                }
-
-                            }).catch( err => {
-                                console.log(err)
-                            })
-
-                            //this.props.history.push("/main");
-
-                        }else{
-
-                        }
-
-
-                    }).catch(err => {console.log(err)})
-
-
+                localStorage.setItem("id_conn",res.data.id)
+                window.location.replace(res.data.url)
                 }else{
-                    console.log(res.error)
+                console.log(res.error)
                 }
-
             }).catch( err => {
                 console.log(err)
             })
-
-        },500)
     }
 
     render() {

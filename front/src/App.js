@@ -9,10 +9,12 @@ import './assets/css/semantic-ui-css/semantic.min.css'
 import './App.css'
 import 'react-toastify/dist/ReactToastify.css';
 import Login from "./pages/auth/login"
+import PopUpLogin from "./pages/auth/popUp_login"
 import Main from "./pages/Main/Main";
 import moment from "moment";
 import { ToastContainer } from 'react-toastify';
 import First_Create from "./pages/FirstWallet/First_Create";
+import ExternCommand from "./pages/auth/ExternCommand";
 
 export default class App extends Component {
 
@@ -20,6 +22,9 @@ export default class App extends Component {
         return !(localStorage.getItem("usrtoken") === null || localStorage.getItem("usrtoken") === undefined || parseInt(localStorage.getItem("exp")) < moment().unix());
     }
 
+    componentDidMount() {
+
+    }
 
 
     render() {
@@ -30,9 +35,14 @@ export default class App extends Component {
                     <Switch>
                         <Redirect exact from={"/"} to={this.verifSession() === true ? "/main" : "/login"}/>
                         <Redirect exact from={"/"} to={"/main"}/>
+
                         <Route exact path="/login" component={Login}/>
+                        {/*<Route exact path="/login" component={PopUpLogin}/>*/}
+
                         <Route exact path="/create_wallet" component={First_Create}/>
                         <Route path="/main" component={withRouter(Main)}/>
+
+                        <Route path="/command/:cmd" component={ExternCommand}/>
                     </Switch>
                 </Router>
 

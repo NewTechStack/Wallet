@@ -1,4 +1,5 @@
-const endpoint = process.env.REACT_APP_SSO_ENDPOINT;
+//const endpoint = process.env.REACT_APP_SSO_ENDPOINT;
+const endpoint = process.env.REACT_APP_WALLET_ENDPOINT;
 
 let extern_sso_service = {
 
@@ -16,8 +17,6 @@ let extern_sso_service = {
         }).then(response => response.json()).catch(error => {
             console.log(error);
         });
-
-
     },
 
 

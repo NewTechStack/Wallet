@@ -86,8 +86,8 @@ export default function Main(props) {
 
     return (
         <>
-                <Menu background_color={primaryColor} ilogo="bx bx-wallet" top_title="Rocket Wallet" top_title_color="#000"
-                      show_logo={true}
+                <Menu background_color={primaryColor} ilogo="bx bx-wallet" top_title="" top_title_color="#000"
+                      show_logo={false}
                       show_active_user={false}
                       active_user_name="Babba Amine" active_user_details="Web developper" active_user_img={profile_img}
                       icons_color={textTitleColor} titles_color={textTitleColor}
@@ -194,7 +194,7 @@ export default function Main(props) {
                                 <MyAccount setCurrentPage={() => setCurrentPage("Mon compte")}/>
                             </Route>
                             <Route path={'/main/dashboard'}>
-                                <DashMain  setCurrentPage={() => setCurrentPage("Tableau de bord")}/>
+                                <DashMain  setCurrentPage={() => setCurrentPage("")}/>
 
                             </Route>
 
