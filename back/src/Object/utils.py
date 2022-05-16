@@ -8,6 +8,7 @@ class Utils:
             temp_json1 = json
             for modifier in modifiers:
                 json = modifier['func'](json)
+                print(json)
                 temp_json2 = temp_json1
                 done2 = True
                 for i in modifier['res']:
