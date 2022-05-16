@@ -8,12 +8,11 @@ class Utils:
             temp_json1 = json
             for modifier in modifiers:
                 json = modifier['func'](json)
-                print(json)
                 temp_json2 = temp_json1
                 done2 = True
                 for i in modifier['res']:
                     # try:
-                        print(temp_json2)
+                        print(temp_json2, i)
                         temp_json2 = temp_json2[i]
                     # except:
                     #     done2 = False
@@ -31,6 +30,5 @@ class Utils:
         elif isinstance(json, dict):
             for elem in json:
                 if any(isinstance(json[elem], type) for type in [dict, list, str]):
-                    print(elem)
                     json[elem] = Utils.json_email_replace(json[elem], modifiers)
         return json

@@ -143,19 +143,5 @@ class Account(W3):
             pass
         return False
 
-    def update_transac(self, address, since):
-        actual = self.link.eth.get_block('latest')['number']
-        while actual > since:
-            block = self.link.eth.get_block(actual, full_transactions=True)
-            for transaction in block['transactions']:
-                recei = transaction['to']
-                expe = transaction['from']
-                if recei == address or expe == address:
-                    print('found', transaction)
-            actual -= 1
-            print(actual)
-        return
-
 if __name__ == '__main__':
     account = Account()
-    account.update_transac('0x781aD19FADc0482115D53ae660A76B852Ac8c276', 12)

@@ -32,7 +32,6 @@ class Sso:
         )
         data = json.loads(response.text)
         if not 'data' in data or data['data'] is None:
-            print(data['error'])
             return [False, "Error connecting to sso api", 500]
         data = data['data']
         key = data["key"]
