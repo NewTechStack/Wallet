@@ -7,7 +7,7 @@ class Utils:
             done1 = True
             temp_json1 = json
             for modifier in modifiers:
-                temp_json1 = modifier['func'](json)
+                temp_json1 = modifier['func'](temp_json1)
                 temp_json2 = temp_json1
                 done2 = True
                 for i in modifier['res']:
