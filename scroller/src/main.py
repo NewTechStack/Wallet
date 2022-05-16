@@ -107,7 +107,8 @@ class Scroller:
             expe = transaction['from']
             in_t =  recei if  recei in self.address_list else None
             out_t = expe if expe in self.address_list else None
-            if in_t is not None or out_t is not None:
+            in_param = [i for i in self.address_list if i[2:].lower() in transaction['input']]
+            if in_t is not None or out_t is not None or len(in_param) > 0:
                 transaction = self.hextojson(transaction)
                 data = {
                     'chain': {
@@ -116,8 +117,8 @@ class Scroller:
                         'network_type': link[2],
                         'network': link[3]
                     },
-                    'address': in_t if in_t is not None else out_t ,
-                    'status': 'in' if in_t is not None else 'out',
+                    'address': in_t if in_t is not None else out_t if out_t is not None else None,
+                    'status': 'in' if in_t is not None else 'out' if out_t is not None else 'func',
                     'date': str(datetime.datetime.utcnow()),
                     'transaction':  transaction,
                     'type': 'account'
@@ -125,15 +126,25 @@ class Scroller:
                 if recei in self.contract_list:
                     func = transaction['input']
                     func = func[0:10] if len(func) > 10 else None
-                    functions = list(self.contracts.filter((r.row["address"] == recei)).run())
-                    functions = functions[0]['deployment_infos']
+                    contract = list(self.contracts.filter((r.row["address"] == recei)).run())[0]
+                    functions = contract['deployment_infos']
                     functions = functions['functions']['hash']
                     for function in functions:
                         if functions[function] == func:
                             func = function
                             break
                     data['function'] = func
-                self.transactions.insert(data).run()
+                    data['transaction']['input_clear'] = link[0].eth.contract(
+                            recei, abi=contract['deployment_infos']['abi']
+                        ).decode_function_input(
+                            transaction['input']
+                        )
+                if len(in_param) > 0:
+                    for addr in in_param:
+                        data['address'] = addr
+                        self.transactions.insert(data).run()
+                else:
+                    self.transactions.insert(data).run()
             in_t =  recei if  recei in self.contract_list else None
             out_t = expe if expe in self.contract_list else None
             if in_t is not None or out_t is not None:
@@ -146,7 +157,7 @@ class Scroller:
                         'network_type': link[2],
                         'network': link[3]
                     },
-                    'address': address ,
+                    'address': address,
                     'status': 'in' if in_t is not None else 'out',
                     'date': str(datetime.datetime.utcnow()),
                     'transaction':  transaction,
@@ -154,14 +165,19 @@ class Scroller:
                 }
                 func = transaction['input']
                 func = func[0:10] if len(func) > 10 else None
-                functions = list(self.contracts.filter((r.row["address"] == address)).run())
-                functions = functions[0]['deployment_infos']
+                contract = list(self.contracts.filter((r.row["address"] == address)).run())[0]
+                functions = contract['deployment_infos']
                 functions = functions['functions']['hash']
                 for function in functions:
                     if functions[function] == func:
                         func = function
                         break
                 data['function'] = func
+                data['transaction']['input_clear'] = link[0].eth.contract(
+                        address, abi=contract['deployment_infos']['abi']
+                    ).decode_function_input(
+                        transaction['input']
+                    )
                 self.transactions.insert(data).run()
         self.meta.filter(r.row['chain_id'] == chain_id).update({'lastchecked': block_number}).run()
         return True
