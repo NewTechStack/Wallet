@@ -12,11 +12,11 @@ class Utils:
                 temp_json2 = temp_json1
                 done2 = True
                 for i in modifier['res']:
-                    try:
+                    # try:
                         temp_json2 = temp_json2[i]
-                    except:
-                        done2 = False
-                        break
+                    # except:
+                    #     done2 = False
+                    #     break
                 if not done2:
                     done1 = False
                     break
