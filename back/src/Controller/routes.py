@@ -9,7 +9,7 @@ def setuproute(app, call):
 
     @app.route('/chain',                                ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, chains])  )
     @app.route('/chain/<>/<>',                          ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, account_load, blockchain_status])  )
-    @app.route('/wallet',                               ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, account_load, account_create])  )
+    # @app.route('/wallet',                               ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, account_load, account_create])  )
     @app.route('/wallets',                              ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, account_load, account_all])  )
     @app.route('/chain/<>/<>/wallet/<>/balance',        ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, load_network, account_load, account_balance])  )
     @app.route('/chain/<>/<>/wallet/<>/transactions',   ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, load_network, account_load, account_transactions])  )
