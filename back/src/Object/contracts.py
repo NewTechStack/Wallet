@@ -95,7 +95,7 @@ class W3:
         signed_txn = self.link.eth.account.signTransaction(build, private_key=owner_key)
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = None
-        if wait = True:
+        if wait is True:
             for _ in range(10):
                 try:
                     txn_receipt = dict(self.link.eth.waitForTransactionReceipt(txn))
