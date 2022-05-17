@@ -143,10 +143,12 @@ class Scroller:
                 if len(in_param) > 0:
                     for addr in in_param:
                         data['address'] = addr
-                        data['status'] = self.define_in_ou(data['transaction']['input_clear'], addr)
+                        if recei in self.contract_list:
+                            data['status'] = self.define_in_ou(data['transaction']['input_clear'], addr)
                         self.transactions.insert(data).run()
                 else:
-                    data['status'] = self.define_in_ou(data['transaction']['input_clear'], addr)
+                    if recei in self.contract_list:
+                        data['status'] = self.define_in_ou(data['transaction']['input_clear'], addr)
                     self.transactions.insert(data).run()
             in_t =  recei if  recei in self.contract_list else None
             out_t = expe if expe in self.contract_list else None
