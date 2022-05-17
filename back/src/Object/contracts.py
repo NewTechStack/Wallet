@@ -1,6 +1,6 @@
-from web3 import Web3
-from web3 import exceptions
+from web3 import Web3, exceptions, middleware
 from web3.middleware import geth_poa_middleware
+from web3.gas_strategies.time_based import construct_time_based_gas_price_strategy
 from hexbytes import HexBytes
 import requests
 import os
@@ -63,6 +63,17 @@ class W3:
             return [False, "invalid connection argument", 400]
         provider = self.networks[self.network_type][self.network]['rpc']
         self.link = Web3(Web3.HTTPProvider(provider))
+        self.link.eth.set_gas_price_strategy(
+            construct_time_based_gas_price_strategy(
+                max_wait_seconds=20,
+                sample_size=120,
+                probability=99,
+                weighted=False
+            )
+        )
+        self.link.middleware_onion.add(middleware.time_based_cache_middleware)
+        self.link.middleware_onion.add(middleware.latest_block_based_cache_middleware)
+        self.link.middleware_onion.add(middleware.simple_cache_middleware)
         self.link.middleware_onion.inject(geth_poa_middleware, layer=0)
         self.link.eth.account.enable_unaudited_hdwallet_features()
         self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
