@@ -68,7 +68,7 @@ class W3:
         self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
 
-    def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 1.5):
+    def execute_transaction(self, transaction, owner_address, owner_key, mult_gas = 1.5):
         gas_cost = None
         for _ in range(10):
             try:
@@ -83,7 +83,7 @@ class W3:
             try:
                 build = transaction.buildTransaction({
                   'from': owner_address,
-                  'gas': gas_cost * additionnal_gas,
+                  'gas': gas_cost * mult_gas,
                   'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
                 })
             except requests.exceptions.HTTPError:
@@ -215,7 +215,7 @@ class Contract(W3):
                 return [False, f"missing {name}:{type}", 400]
         contract = self.link.eth.contract(abi=self.abi, bytecode=self.bytecode)
         transaction = contract.constructor(**kwargs)
-        ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 300000)
+        ret = self.execute_transaction(transaction, owner.address, owner.key, mult_gas = 3)
         if not ret[0]:
             return ret
         if 'return' not in ret[1]:
