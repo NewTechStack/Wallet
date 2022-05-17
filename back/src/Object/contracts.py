@@ -65,7 +65,7 @@ class W3:
         self.link = Web3(Web3.HTTPProvider(provider))
         self.link.eth.setGasPriceStrategy(fast_gas_price_strategy)
         self.link.middleware_onion.inject(geth_poa_middleware, layer=0)
-        self.link.middleware_stack.add(latest_block_based_cache_middleware)
+        self.link.middleware_onion.add(latest_block_based_cache_middleware)
         self.link.eth.account.enable_unaudited_hdwallet_features()
         self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
