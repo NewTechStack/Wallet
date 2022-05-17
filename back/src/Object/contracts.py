@@ -84,7 +84,8 @@ class W3:
                 build = transaction.buildTransaction({
                   'from': owner_address,
                   'gas': gas_cost + additionnal_gas,
-                  'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
+                  'nonce': self.link.eth.getTransactionCount(owner_address, "pending"),
+                  'maxPriorityFeePerGas': 1000000000
                 })
                 success = True
             except requests.exceptions.HTTPError:
