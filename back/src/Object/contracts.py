@@ -65,9 +65,9 @@ class W3:
         self.link = Web3(Web3.HTTPProvider(provider))
         self.link.eth.set_gas_price_strategy(
             construct_time_based_gas_price_strategy(
-                max_wait_seconds=20,
+                max_wait_seconds=10,
                 sample_size=120,
-                probability=99,
+                probability=100,
                 weighted=False
             )
         )
