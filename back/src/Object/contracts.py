@@ -63,9 +63,7 @@ class W3:
             return [False, "invalid connection argument", 400]
         provider = self.networks[self.network_type][self.network]['rpc']
         self.link = Web3(Web3.HTTPProvider(provider))
-        self.link.eth.setGasPriceStrategy(fast_gas_price_strategy)
         self.link.middleware_onion.inject(geth_poa_middleware, layer=0)
-        self.link.middleware_onion.add(middleware.latest_block_based_cache_middleware)
         self.link.eth.account.enable_unaudited_hdwallet_features()
         self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
@@ -82,7 +80,7 @@ class W3:
             return [False, "Invalid logic", 400]
         build = None
 
-        gas_price = self.link.eth.generate_gas_price() * mult_gas
+        gas_price = w3.toWei(21, 'gwei') * mult_gas
         for _ in range(10):
             try:
                 build = transaction.buildTransaction({
