@@ -113,10 +113,13 @@ class Account(W3):
 
     def tokens(self, account_addr):
         account_addr = self.link.toChecksumAddress(account_addr)
-        contracts = list(self.ctr.run())
+        contracts = list(self.ctr.filter(
+            (r.row["network_type"] == self.network_type)
+            & (r.row["network"] == self.network)
+            ).run())
         ret = {}
         for contract in contracts:
-            c = Contract('').internal_get_contract(contract['id'])[1]
+            c = Contract('', self.network_type, self.network).internal_get_contract(contract['id'])[1]
             c.connect()
             args = {'account': account_addr, 'owner': account_addr}
             res = c.exec_function('balanceOf', args)

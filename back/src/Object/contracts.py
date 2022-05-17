@@ -68,7 +68,7 @@ class W3:
         self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
 
-    def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 10000):
+    def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 1.5):
         gas_cost = None
         for _ in range(10):
             try:
@@ -78,26 +78,29 @@ class W3:
                 pass
         if gas_cost is None:
             return [False, "Invalid logic", 400]
-        success = False
-        while success is False:
+        build = None
+        for _ in range(10):
             try:
                 build = transaction.buildTransaction({
                   'from': owner_address,
-                  'gas': gas_cost + additionnal_gas,
-                  'nonce': self.link.eth.getTransactionCount(owner_address, "pending"),
-                  'maxPriorityFeePerGas': 1000000000
+                  'gas': gas_cost * additionnal_gas,
+                  'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
                 })
-                success = True
             except requests.exceptions.HTTPError:
                 pass
+        if build is None:
+            return [False, "Can't connect to RPC", 404]
         signed_txn = self.link.eth.account.signTransaction(build, private_key=owner_key)
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
-        while True:
+        txn_receipt = None
+        for _ in range(10):
             try:
                 txn_receipt = dict(self.link.eth.waitForTransactionReceipt(txn))
                 break
             except exceptions.TimeExhausted:
                 pass
+        if txn_receipt is None:
+            return [True, {"transact": txn}, None]
         del txn_receipt['logs']
         del txn_receipt['logsBloom']
         txn_receipt = self.hextojson(txn_receipt)
@@ -215,6 +218,8 @@ class Contract(W3):
         ret = self.execute_transaction(transaction, owner.address, owner.key, additionnal_gas = 300000)
         if not ret[0]:
             return ret
+        if 'return' not in ret[1]:
+            ret[1]['return'] = dict(self.link.eth.waitForTransactionReceipt(txn))
         data = {
             'deployment_infos': {
                 "log": ret[1],
