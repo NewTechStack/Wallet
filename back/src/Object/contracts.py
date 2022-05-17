@@ -68,7 +68,7 @@ class W3:
         self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
 
-    def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 0):
+    def execute_transaction(self, transaction, owner_address, owner_key, additionnal_gas = 10000):
         gas_cost = None
         for _ in range(10):
             try:
