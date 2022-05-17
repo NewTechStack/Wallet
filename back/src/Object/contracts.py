@@ -180,7 +180,7 @@ class Contract(W3):
         if keep_function['stateMutability'] == 'view':
             return [True, self.hextojson({'result': transaction.call()}), None]
         owner = self.owner()
-        return self.execute_transaction(transaction, owner.address, owner.key, wait)
+        return self.execute_transaction(transaction, owner.address, owner.key, wait=wait)
 
     def get_constructor(self):
         constructor = [i for i in self.abi if 'type' in i and i['type'] == 'constructor']

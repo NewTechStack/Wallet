@@ -158,6 +158,7 @@ def contract_cmd(cn, nextc):
     print(cn.pr)
     for cmd in cn.pr["cmd_list"]:
         ret.append(cn.private['contract'].exec_function(cmd["name"], cmd["kwargs"], wait=False))
+        print(ret)
     err = [True, {'return': ret}, None]
     return cn.call_next(nextc, err)
 
