@@ -7,7 +7,9 @@ import AddIcon from "@material-ui/icons/Add";
 import WalletService from "../../../provider/walletService";
 import {toast} from "react-toastify";
 import polygon_icon from "../../../assets/icons/polygon.png"
+import ether_icon from "../../../assets/icons/ether_icon.png"
 import empty_icon from "../../../assets/icons/empty_icon2.png"
+import unknoen_icon from "../../../assets/icons/unknoen_token.png"
 import wallet_icon from "../../../assets/icons/wallet_icon_1.png"
 import InlineDialog from '@atlaskit/inline-dialog';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
@@ -25,13 +27,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import DropdownMenu, {DropdownItem, DropdownItemGroup} from '@atlaskit/dropdown-menu';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import moment from "moment";
+import { Dropdown } from 'semantic-ui-react'
 
-const chains = [
-    {
-        id: 0,
-        title: "polygon - testnet"
-    }
-]
 
 export default function All(props) {
 
@@ -47,47 +44,74 @@ export default function All(props) {
     const [openQrCodeModal, setOpenQrCodeModal] = React.useState(false);
 
 
-    const [chain, setChain] = React.useState("polygon - testnet");
+    const [chains, setChains] = React.useState();
+    const [selectedChain, setSelectedChain] = React.useState();
 
     useEffect(() => {
-        console.log(props)
         get_wallets()
     }, []);
 
     const get_wallets = () => {
+        WalletService.chain(localStorage.getItem("usrtoken")).then( r => {
 
-        WalletService.get_wallets(localStorage.getItem("usrtoken")).then(res => {
-            console.log(res)
-            if (res.status === 200 && res.succes === true) {
-                if (res.data && res.data.wallets) {
-                    if (res.data.wallets.length > 0) {
+            if(r.status === 200 && r.succes === true) {
 
-                        setWallets(res.data.wallets)
-                        setSelected_wallet(res.data.wallets[res.data.wallets.length - 1])
-                        setTimeout(() => {
-                            getContracts(res.data.wallets[res.data.wallets.length - 1])
-                        },250)
+                let objArray1 = [];
+                let objArray2 = [];
+                Object.keys(r.data).forEach(key => objArray1.push({
+                    id: key,
+                    data: r.data[key]
+                }));
+                objArray1.map( item => {
+                    let data = item.data
+                    Object.keys(data).forEach(key => objArray2.push({
+                        id: item.id,
+                        type:key,
+                        data: data[key]
+                    }));
+                })
+                setChains(objArray2)
+                setSelectedChain(objArray2[1])
+                WalletService.get_wallets(localStorage.getItem("usrtoken")).then(res => {
+                    console.log(res)
+                    if (res.status === 200 && res.succes === true) {
+                        if (res.data && res.data.wallets) {
+                            if (res.data.wallets.length > 0) {
+
+                                setWallets(res.data.wallets)
+                                setSelected_wallet(res.data.wallets[res.data.wallets.length - 1])
+                                setTimeout(() => {
+                                    getContracts(objArray2[1].id,objArray2[1].type,res.data.wallets[res.data.wallets.length - 1])
+                                },250)
+                            }
+                        }
+                    } else {
+                        console.log(res.error)
+                        toast.error(res.error, {
+                            position: toast.POSITION.TOP_RIGHT
+                        });
                     }
-                }
-            } else {
-                console.log(res.error)
-                toast.error(res.error, {
-                    position: toast.POSITION.TOP_RIGHT
-                });
+
+                }).catch(err => {
+                    console.log(err)
+                    toast.error("Une erreur est survenue", {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                })
+
+            }else{
+
             }
 
-        }).catch(err => {
-            console.log(err)
-            toast.error("Une erreur est survenue", {
-                position: toast.POSITION.TOP_RIGHT
-            });
-        })
+        }).catch( err => {console.log(err)})
+
     }
 
-    const getContracts = (wallet) => {
+    const getContracts = (chain1,chain2,wallet) => {
 
+        console.log(wallet)
 
-        WalletService.getContracts(localStorage.getItem("usrtoken"), "polygon", "testnet", wallet.address).then(res => {
+        WalletService.getContracts(localStorage.getItem("usrtoken"), chain1, chain2, wallet.address).then(res => {
             console.log(res)
             if (res.status === 200 && res.succes === true) {
                 let objArray = [];
@@ -99,7 +123,8 @@ export default function All(props) {
                 let queue = new PQueue({concurrency: 1});
                 let calls = [];
                 objArray.map(item => {
-                    calls.push(() => getContractDetails(item.id).then(result => {
+                    calls.push(() => getContractDetails(chain1,chain2,item.id).then(result => {
+                        console.log(result)
                         item.data.name = result.name
                         item.data.symbol = result.symbol
                         item.metadata = result.metadata
@@ -113,7 +138,7 @@ export default function All(props) {
                         console.log(contract_id)
                         let find_index = objArray.findIndex(x => x.id === contract_id)
                         if(find_index > -1){
-                            let transactions = await getContractWalletTransactions(wallet.id,objArray[find_index].data.address)
+                            let transactions = await getContractWalletTransactions(chain1,chain2,wallet.id,objArray[find_index].data.address)
                             console.log(transactions)
                             if(transactions && transactions !== "false"){
                                 setSelected_contract_wallet_transactions(transactions)
@@ -137,14 +162,14 @@ export default function All(props) {
     }
 
 
-    const getContractDetails = (contract_id) => {
+    const getContractDetails = (chain1,chain2,contract_id) => {
         return new Promise(resolve => {
             let data = {}
-            WalletService.getContractData("polygon", "testnet", contract_id, localStorage.getItem("usrtoken")).then(r0 => {
+            WalletService.getContractData(chain1, chain2, contract_id, localStorage.getItem("usrtoken")).then( r0 => {
                 if (r0.data && Array.isArray(r0.data) && r0.data.length > 0 && r0.data[0].metadata) data.metadata = r0.data[0].metadata
-                WalletService.getContractName("polygon", "testnet", contract_id, {kwargs: {}}, localStorage.getItem("usrtoken")).then(r1 => {
+                WalletService.getContractName(chain1, chain2, contract_id, {kwargs: {}}, localStorage.getItem("usrtoken")).then(r1 => {
                     data.name = r1.data.result
-                    WalletService.getContractSymbol("polygon", "testnet", contract_id, {kwargs: {}}, localStorage.getItem("usrtoken")).then(r2 => {
+                    WalletService.getContractSymbol(chain1, chain2, contract_id, {kwargs: {}}, localStorage.getItem("usrtoken")).then(r2 => {
                         data.symbol = r2.data.result
                         resolve(data)
                     }).catch(err => {
@@ -162,11 +187,12 @@ export default function All(props) {
 
 
 
-    const getContractWalletTransactions = (wallet_id,contract_adr) => {
+    const getContractWalletTransactions = (chain1,chain2,wallet_id,contract_adr) => {
 
         return new Promise(resolve => {
 
-            WalletService.getContractWalletTransactions("polygon","testnet",wallet_id,contract_adr,localStorage.getItem("usrtoken")).then( res => {
+            WalletService.getContractWalletTransactions(chain1,chain2,wallet_id,contract_adr,localStorage.getItem("usrtoken")).then( res => {
+                console.log(res)
                 if (res.status === 200 && res.succes === true) {
                     resolve(res.data.transaction || [])
                 }else{
@@ -207,7 +233,7 @@ export default function All(props) {
             <div className="container-fluid" style={{marginTop: 60, marginLeft: 20, marginRight: 20}}>
 
                 {
-                    wallets && wallets.length > 0 && selected_wallet &&
+                    wallets && wallets.length > 0 && chains && chains.length > 0 && selected_wallet && selectedChain &&
                     <div className="row mb-3">
                         <div className="col-lg-12 mb-2">
                             <Card style={{backgroundColor: "#fff", border: "unset", marginRight: 30}}>
@@ -215,67 +241,57 @@ export default function All(props) {
                                     <div style={{display: "flex", justifyContent: "space-between", cursor: "pointer"}}>
                                         <div style={{alignSelf: "center"}}>
                                             <div style={{marginLeft: 5, alignSelf: "center"}}>
-                                                <DropdownMenu
-                                                    trigger={({triggerRef, ...props}) => (
-                                                        <h4
-                                                            {...props}
-                                                            ref={triggerRef}
-                                                        >Portefeuille: {selected_wallet.name}
-                                                        </h4>
-                                                    )}
-                                                >
-                                                    <DropdownItemGroup>
-                                                        {
-                                                            wallets.map((item, key) => (
-                                                                <DropdownItem testId={key}
-                                                                              isDisabled={true}
-                                                                              onClick={() => {
-                                                                                  console.log(item)
-                                                                                  /*setContracts()
-                                                                                  setSelected_wallet(item)
-                                                                                  getContracts(item.address)*/
-                                                                              }}
-                                                                >
-                                                                    {item.name}
-                                                                </DropdownItem>
-                                                            ))
-                                                        }
-                                                    </DropdownItemGroup>
-                                                </DropdownMenu>
+                                                {/*<Dropdown
+                                                    value={selected_wallet}
+                                                    text={"Portefeuille: "+selected_wallet.name}
+                                                    selection
+
+                                                    options={wallets.map( (item,key) => {
+                                                       return({
+                                                           key: key,
+                                                           text: item.name,
+                                                           value: item,
+                                                           description:item.address.substr(0,7) + "..." + item.address.substr(item.address.length -5,4)
+                                                       })
+                                                    })}
+                                                    onChange={(e,{value}) => {
+                                                        console.log(value)
+                                                        setSelected_wallet(value)
+                                                        setContracts()
+                                                        getContracts(selectedChain.id,selectedChain.type,value)
+                                                    }}
+                                                />
+
+                                                <p className="detailTr" style={{textAlign:"center",marginTop:5}}
+                                                   onClick={() => {
+                                                       window.open("https://mumbai.polygonscan.com/address/" + selected_wallet.address + "#tokentxns" ,"_blank")
+                                                   }}
+                                                >détails du wallet</p>*/}
                                             </div>
-
-
                                         </div>
 
                                         <div>
-                                            <div style={{display: "flex", cursor: "pointer"}}>
-                                                <img alt={""} src={polygon_icon}
-                                                     style={{height: 30, width: 30, alignSelf: "center"}}/>
-                                                <div style={{marginLeft: 5, alignSelf: "center"}}>
-                                                    <DropdownMenu
-                                                        trigger={({triggerRef, ...props}) => (
-                                                            <h4
-                                                                {...props}
-                                                                ref={triggerRef}
-                                                            >Polygon - testnet
-                                                            </h4>
-                                                        )}
-                                                    >
-                                                        <DropdownItemGroup>
-                                                            {
-                                                                chains.map((item, key) => (
-                                                                    <DropdownItem testId={item.id}
-                                                                    >
-                                                                        {item.title}
-                                                                    </DropdownItem>
-                                                                ))
-                                                            }
-                                                        </DropdownItemGroup>
-                                                    </DropdownMenu>
+                                            <div style={{marginLeft: 5, alignSelf: "center"}}>
+                                                    <Dropdown
+                                                        value={selectedChain}
+                                                        selection
+                                                        options={chains.map( (item,key) => {
+                                                            return({
+                                                                key: key,
+                                                                text: item.id + " - " + item.type,
+                                                                value: item,
+                                                                image: { avatar: true, src: item.id === "polygon" ? polygon_icon : item.id === "ether" ? ether_icon : unknoen_icon }
+                                                            })
+                                                        })}
+                                                        onChange={(e,{value}) => {
+                                                            console.log(value)
+                                                            setSelectedChain(value)
+                                                            setShowContractDetails(false)
+                                                            setContracts()
+                                                            getContracts(value.id,value.type,selected_wallet)
+                                                        }}
+                                                    />
                                                 </div>
-
-                                            </div>
-
                                         </div>
                                     </div>
                                 </CardBody>
@@ -312,7 +328,7 @@ export default function All(props) {
                                                                  onClick={async () => {
                                                                      console.log(item)
                                                                      setLoading(true)
-                                                                     let transactions = await getContractWalletTransactions(selected_wallet.id,item.data.address)
+                                                                     let transactions = await getContractWalletTransactions(selectedChain.id,selectedChain.type,selected_wallet.id,item.data.address)
                                                                      console.log(transactions)
                                                                      if(transactions && transactions !== "false"){
                                                                          setSelected_contract_wallet_transactions(transactions)
@@ -386,10 +402,11 @@ export default function All(props) {
                             </div>
                             <div style={{
                                 padding: 15,
-                                backgroundColor: "#f0f0f0",
+                                backgroundColor: "#fff",
                                 borderRadius: 7.5,
                                 marginBottom: 20,
-                                marginRight:30
+                                marginRight:30,
+                                boxShadow:"0 2px 5px 0px rgb(0 0 0 / 10%)"
                             }}
                             >
 
@@ -441,32 +458,35 @@ export default function All(props) {
                                                     {
                                                         selected_contract_wallet_transactions.map((item,key) => (
                                                             <div key={key} className="row mt-1 mb-1">
-                                                                <div className="col-lg-3">
-                                                                    <h6>{"Le " + moment(item.date).format("DD MMMM YYYY")}</h6>
+                                                                <div className="col-lg-2">
+                                                                    <h6>{moment(item.date).fromNow()}</h6>
                                                                 </div>
-                                                                <div className="col-lg-4">
+                                                                <div className="col-lg-10">
                                                                     <h6>
                                                                     {
                                                                         item.transaction.from === selected_wallet.address ?
-                                                                            ("envoie de " + item.transaction.input_clear.amount + " tokens") :
-                                                                            ("reception de " + item.transaction.input_clear.amount + " tokens")
+                                                                            <span>
+                                                                                Vous avez envoyé&nbsp;
+                                                                                <span style={{color:"#1c94fe"}}>
+                                                                                    {item.transaction.input_clear.amount + " " + selected_contract.data.symbol}
+                                                                                </span>
+                                                                                &nbsp;à&nbsp;
+                                                                                <span style={{color:"#1c94fe"}}>
+                                                                                    {item.transaction.input_clear.recipient}
+                                                                                </span>
+                                                                            </span>
+                                                                             :
+                                                                            <span>
+                                                                                <span style={{color:"#1c94fe"}}>
+                                                                                    {item.transaction.from.substr(0,6) + "..." + item.transaction.from.substr(item.transaction.from.length -4,4)}
+                                                                                </span>
+                                                                                &nbsp;vous a envoyé&nbsp;
+                                                                            <span style={{color:"#1c94fe"}}>
+                                                                                {item.transaction.input_clear.amount + " " + selected_contract.data.symbol}
+                                                                            </span>
+                                                                            </span>
                                                                     }
                                                                     </h6>
-                                                                </div>
-                                                                <div className="col-lg-5">
-                                                                    {
-                                                                        item.transaction.from === selected_wallet.address ?
-                                                                            <div style={{display:"flex"}}>
-                                                                                <h6>{"Portfeuille: " + selected_wallet.name + " -> "}</h6>
-                                                                                <h6 className="truncateAddress" title={item.transaction.input_clear.recipient}>{item.transaction.input_clear.recipient}</h6>
-                                                                            </div> :
-                                                                            <div style={{display:"flex"}}>
-                                                                                <h6 className="truncateAddress" title={item.transaction.from}>{item.transaction.from}</h6>
-                                                                                <h6>{" -> " + "Portefeuille: " + selected_wallet.name }</h6>
-                                                                            </div>
-                                                                    }
-
-
                                                                 </div>
                                                             </div>
                                                         ))

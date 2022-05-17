@@ -86,7 +86,7 @@ export default function Main(props) {
 
     return (
         <>
-                <Menu background_color={primaryColor} ilogo="bx bx-wallet" top_title="" top_title_color="#000"
+                {/*<Menu background_color={primaryColor} ilogo="bx bx-wallet" top_title="" top_title_color="#000"
                       show_logo={false}
                       show_active_user={false}
                       active_user_name="Babba Amine" active_user_details="Web developper" active_user_img={profile_img}
@@ -105,18 +105,18 @@ export default function Main(props) {
                           setOpenDrawerMenu(!openDrawerMenu)
                       }}
                       isMobile={isMobile}
-                />
+                />*/}
 
 
 
 
                 <section className="home-section"
-                         style={{left: isBigScreen ? (toggle_menu === false ? 78 : 240) : 0,
+                         /*style={{left: isBigScreen ? (toggle_menu === false ? 78 : 240) : 0,
                              width:"calc(100% - " + (isBigScreen ?  toggle_menu === false ? 78 : 240 : 0).toString() + "px)"
-                         }}
+                         }}*/
                 >
                     <div className="home-content">
-                        <i className='bx bx-menu' style={{color:textTitleColor}}
+                        {/*<i className='bx bx-menu' style={{color:textTitleColor}}
                            onClick={(event => {
                                if (isBigScreen) {
                                    let sidebar = document.querySelector(".sidebar");
@@ -127,7 +127,7 @@ export default function Main(props) {
                                }
                            })}
                         />
-                        <span className="text" style={{color:textTitleColor}}>{currentPage}</span>
+                        <span className="text" style={{color:textTitleColor}}>{currentPage}</span>*/}
 
                         <div style={{position: "fixed", right: 5,display:"grid"}} className="user-avatar-container">
 
@@ -152,13 +152,13 @@ export default function Main(props) {
                                     <DropdownItem elemBefore={<GroupIcon fontSize="medium" color="primary" />}>Members</DropdownItem>
                                     <DropdownItem elemBefore={<ReceiptIcon fontSize="medium" color="primary" />}>Facturation</DropdownItem>
                                     <DropdownItem elemBefore={<HelpIcon fontSize="medium" color="primary" />}>Niveau de support</DropdownItem>*/}
-                                    <DropdownItem elemBefore={<AccountCircleIcon fontSize="medium" color="primary" />}
+                                    {/*<DropdownItem elemBefore={<AccountCircleIcon fontSize="medium" color="primary" />}
                                                   onClick={() => {
                                                       props.history.push("/main/myaccount")
                                                   }}
                                     >
                                         Mon profil
-                                    </DropdownItem>
+                                    </DropdownItem>*/}
                                     {/*<DropdownItem elemBefore={<StorageIcon fontSize="medium" color="primary" />}>Mes données</DropdownItem>*/}
                                     <DropdownItem elemBefore={<LockIcon fontSize="medium" color="error" />}
                                                   onClick={(e => {

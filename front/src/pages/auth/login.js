@@ -43,7 +43,7 @@ class login extends Component {
         if(localStorage.getItem("id_conn") && localStorage.getItem("id_conn") !== undefined && localStorage.getItem("id_conn") !== "" ){
 
             extern_sso_service.conn(localStorage.getItem("id_conn")).then( connRes => {
-
+                console.log(connRes)
                 if(connRes && connRes.data){
 
                     var decoded = jwt_decode(connRes.data.usrtoken);
@@ -63,12 +63,45 @@ class login extends Component {
                         this.props.history.push("/main")
                     }
 
+                    /*WalletService.get_wallets(connRes.data.usrtoken).then( res => {
+
+                        console.log(res)
+                        if(res.status === 200 && res.succes === true){
+                            if(res.data && res.data.wallets){
+
+                                if(res.data.wallets.length === 0){
+                                    this.props.history.push("/create_wallet");
+                                }else{
+                                    if(this.props.history.location.search && this.props.history.location.search.trim() !== "" && this.props.history.location.search.length > 1){
+                                        let path = this.props.history.location.search.substring(1) + ((this.props.history.location.hash && this.props.history.location.hash.trim() !== "") ? this.props.history.location.hash :"" )
+                                        this.props.history.push(path)
+                                    }else{
+                                        this.props.history.push("/main")
+                                    }
+                                }
+
+                            }else{
+                                console.log("Une erreur est survenue")
+                            }
+
+                        }else{
+                            console.log(res.error)
+                        }
+
+                    }).catch( err => {
+                        console.log(err)
+                    })*/
+
+
+
                 }else{
+                    localStorage.removeItem("id_conn")
                     this.setState({firstLoading:false})
                 }
 
 
             }).catch(err => {
+                localStorage.removeItem("id_conn")
                 this.setState({firstLoading:false})
                 console.log(err)
             })

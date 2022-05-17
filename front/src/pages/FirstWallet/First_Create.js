@@ -35,6 +35,8 @@ export default class First_Create extends Component{
                     if(res.data.wallets.length > 0){
                         this.setState({loading:false})
                         this.props.history.push("/main");
+                    }else{
+                        this.setState({loading:false})
                     }
                 }else{
                     this.props.history.push("/login");

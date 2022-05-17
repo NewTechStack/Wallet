@@ -127,3 +127,23 @@
 .detailTr:hover{
     text-decoration: underline;
 }
+
+
+.ui.selection.dropdown .menu>.item {
+    word-wrap: unset!important;
+}
+.ui.selection.active.dropdown:hover{
+    border-color: #f0f0f0;
+}
+.ui.selection.active.dropdown{
+    border-color: #f0f0f0;
+}
+.ui.selection.active.dropdown .menu{
+    border-color: #f0f0f0;
+}
+.ui.selection.active.dropdown .menu:hover{
+    border-color: #f0f0f0;
+}
+.ui.selection.active.dropdown:hover .menu{
+    border-color: #f0f0f0;
+}
