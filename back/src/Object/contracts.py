@@ -79,7 +79,6 @@ class W3:
         if gas_cost is None:
             return [False, "Invalid logic", 400]
         build = None
-
         gas_price = w3.toWei(21, 'gwei') * mult_gas
         for _ in range(10):
             try:
