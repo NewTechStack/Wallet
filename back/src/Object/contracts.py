@@ -92,7 +92,12 @@ class W3:
                 pass
         signed_txn = self.link.eth.account.signTransaction(build, private_key=owner_key)
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
-        txn_receipt = dict(self.link.eth.waitForTransactionReceipt(txn))
+        while True:
+            try:
+                txn_receipt = dict(self.link.eth.waitForTransactionReceipt(txn))
+                break
+            except exceptions.TimeExhausted:
+                pass
         del txn_receipt['logs']
         del txn_receipt['logsBloom']
         txn_receipt = self.hextojson(txn_receipt)
