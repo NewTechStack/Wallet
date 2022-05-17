@@ -63,23 +63,12 @@ class W3:
             return [False, "invalid connection argument", 400]
         provider = self.networks[self.network_type][self.network]['rpc']
         self.link = Web3(Web3.HTTPProvider(provider))
-        self.link.eth.set_gas_price_strategy(
-            construct_time_based_gas_price_strategy(
-                max_wait_seconds=10,
-                sample_size=120,
-                probability=100,
-                weighted=False
-            )
-        )
-        self.link.middleware_onion.add(middleware.time_based_cache_middleware)
-        self.link.middleware_onion.add(middleware.latest_block_based_cache_middleware)
-        self.link.middleware_onion.add(middleware.simple_cache_middleware)
         self.link.middleware_onion.inject(geth_poa_middleware, layer=0)
         self.link.eth.account.enable_unaudited_hdwallet_features()
         self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
 
-    def execute_transaction(self, transaction, owner_address, owner_key, mult_gas = 1.5):
+    def execute_transaction(self, transaction, owner_address, owner_key, mult_gas = 2, wait = True):
         gas_cost = None
         for _ in range(10):
             try:
@@ -90,11 +79,13 @@ class W3:
         if gas_cost is None:
             return [False, "Invalid logic", 400]
         build = None
+        gas_price = self.link.eth.generate_gas_price() * mult_gas
         for _ in range(10):
             try:
                 build = transaction.buildTransaction({
                   'from': owner_address,
-                  'gas': gas_cost * mult_gas,
+                  'gas': gas_cost,
+                  'gasPrice': gas_price,
                   'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
                 })
             except requests.exceptions.HTTPError:
@@ -104,12 +95,13 @@ class W3:
         signed_txn = self.link.eth.account.signTransaction(build, private_key=owner_key)
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = None
-        for _ in range(10):
-            try:
-                txn_receipt = dict(self.link.eth.waitForTransactionReceipt(txn))
-                break
-            except exceptions.TimeExhausted:
-                pass
+        if wait = True:
+            for _ in range(10):
+                try:
+                    txn_receipt = dict(self.link.eth.waitForTransactionReceipt(txn))
+                    break
+                except exceptions.TimeExhausted:
+                    pass
         if txn_receipt is None:
             return [True, {"transact": txn}, None]
         del txn_receipt['logs']
@@ -168,7 +160,7 @@ class Contract(W3):
             ).run())
         return [True, transactions, None]
 
-    def exec_function(self, name, kwargs):
+    def exec_function(self, name, kwargs, wait=True):
         keep_function = None
         for function in self.abi:
             if 'type' in function and function['type'] == 'function':
@@ -188,7 +180,7 @@ class Contract(W3):
         if keep_function['stateMutability'] == 'view':
             return [True, self.hextojson({'result': transaction.call()}), None]
         owner = self.owner()
-        return self.execute_transaction(transaction, owner.address, owner.key)
+        return self.execute_transaction(transaction, owner.address, owner.key, wait)
 
     def get_constructor(self):
         constructor = [i for i in self.abi if 'type' in i and i['type'] == 'constructor']
