@@ -69,8 +69,8 @@ class login extends Component {
 
                 }else{
                     localStorage.removeItem("id_conn")
-                    localStorage.removeItem("cmd")
-                    localStorage.removeItem("user_url")
+                    /*localStorage.removeItem("cmd")*/
+                    /*localStorage.removeItem("user_url")*/
                     this.setState({firstLoading:false})
                     this.conn()
                 }
@@ -78,8 +78,8 @@ class login extends Component {
 
             }).catch(err => {
                 localStorage.removeItem("id_conn")
-                localStorage.removeItem("cmd")
-                localStorage.removeItem("user_url")
+                /*localStorage.removeItem("cmd")*/
+                /*localStorage.removeItem("user_url")*/
                 this.setState({firstLoading:false})
                 console.log(err)
                 this.conn()
