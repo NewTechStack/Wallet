@@ -112,6 +112,16 @@ let WalletService ={
         });
     },
 
+    deployCmd(chain1,chain2,contractType,data,usrtoken){
+        return fetch(endpoint+'/chain/'+chain1+'/'+chain2 +'/contract/'+contractType+'/deploy/cmd', {
+            method: 'POST',
+            body:JSON.stringify(data),
+            headers:this.loadHeadersToken(usrtoken),
+        }).then(response => response.json()).catch(error => {
+            console.log(error);
+        });
+    },
+
 }
 
 

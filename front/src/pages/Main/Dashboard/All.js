@@ -28,6 +28,7 @@ import DropdownMenu, {DropdownItem, DropdownItemGroup} from '@atlaskit/dropdown-
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import moment from "moment";
 import { Dropdown } from 'semantic-ui-react'
+import {verifSession} from "../../../tools/functions";
 
 
 export default function All(props) {
@@ -161,7 +162,6 @@ export default function All(props) {
         })
     }
 
-
     const getContractDetails = (chain1,chain2,contract_id) => {
         return new Promise(resolve => {
             let data = {}
@@ -184,8 +184,6 @@ export default function All(props) {
 
         })
     }
-
-
 
     const getContractWalletTransactions = (chain1,chain2,wallet_id,contract_adr) => {
 

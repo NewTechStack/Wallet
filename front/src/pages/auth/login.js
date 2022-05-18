@@ -37,8 +37,10 @@ class login extends Component {
 
 
     componentDidMount() {
-        /*this.props.history.push("/main")*/
+
         console.log(localStorage.getItem("id_conn") )
+        console.log(localStorage.getItem("cmd") )
+        console.log(localStorage.getItem("user_url") )
 
         if(localStorage.getItem("id_conn") && localStorage.getItem("id_conn") !== undefined && localStorage.getItem("id_conn") !== "" ){
 
@@ -56,60 +58,39 @@ class login extends Component {
                     localStorage.setItem("roles",JSON.stringify(decoded.payload.roles))
                     this.setState({firstLoading:false,loading:false})
 
-                    if(this.props.history.location.search && this.props.history.location.search.trim() !== "" && this.props.history.location.search.length > 1){
-                        let path = this.props.history.location.search.substring(1) + ((this.props.history.location.hash && this.props.history.location.hash.trim() !== "") ? this.props.history.location.hash :"" )
-                        this.props.history.push(path)
-                    }else{
+                    if(localStorage.getItem("cmd") && localStorage.getItem("cmd") !== undefined && localStorage.getItem("cmd") !== "" ){
+                        this.props.history.push("/command/" + localStorage.getItem("cmd"))
+                    }else if(localStorage.getItem("user_url") && localStorage.getItem("user_url") !== undefined && localStorage.getItem("user_url") !== "" ){
+                        this.props.history.push(localStorage.getItem("user_url"))
+                    }
+                    else{
                         this.props.history.push("/main")
                     }
 
-                    /*WalletService.get_wallets(connRes.data.usrtoken).then( res => {
-
-                        console.log(res)
-                        if(res.status === 200 && res.succes === true){
-                            if(res.data && res.data.wallets){
-
-                                if(res.data.wallets.length === 0){
-                                    this.props.history.push("/create_wallet");
-                                }else{
-                                    if(this.props.history.location.search && this.props.history.location.search.trim() !== "" && this.props.history.location.search.length > 1){
-                                        let path = this.props.history.location.search.substring(1) + ((this.props.history.location.hash && this.props.history.location.hash.trim() !== "") ? this.props.history.location.hash :"" )
-                                        this.props.history.push(path)
-                                    }else{
-                                        this.props.history.push("/main")
-                                    }
-                                }
-
-                            }else{
-                                console.log("Une erreur est survenue")
-                            }
-
-                        }else{
-                            console.log(res.error)
-                        }
-
-                    }).catch( err => {
-                        console.log(err)
-                    })*/
-
-
-
                 }else{
                     localStorage.removeItem("id_conn")
+                    localStorage.removeItem("cmd")
+                    localStorage.removeItem("user_url")
                     this.setState({firstLoading:false})
+                    this.conn()
                 }
 
 
             }).catch(err => {
                 localStorage.removeItem("id_conn")
+                localStorage.removeItem("cmd")
+                localStorage.removeItem("user_url")
                 this.setState({firstLoading:false})
                 console.log(err)
+                this.conn()
             })
 
         }else{
             this.setState({firstLoading:false})
             if(this.verifSession() === true){
                 this.props.history.push("/main")
+            }else{
+                this.conn()
             }
         }
     }
@@ -121,6 +102,7 @@ class login extends Component {
 
     conn(){
         this.setState({loading:true})
+
         extern_sso_service.sso().then( res => {
             console.log(res)
             if(res.status === 200 && res.succes === true){
@@ -141,7 +123,7 @@ class login extends Component {
             <>
                 <MuiBackdrop open={this.state.loading || this.state.firstLoading}  />
 
-                {
+                {/*{
                     this.state.firstLoading === false &&
                     <div className="container container-lg" style={{marginTop:120}}>
 
@@ -180,7 +162,7 @@ class login extends Component {
 
 
                     </div>
-                }
+                }*/}
 
             </>
         )

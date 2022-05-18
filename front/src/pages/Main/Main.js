@@ -32,6 +32,7 @@ import user_icon from "../../assets/images/icons/user.png"
 import {primaryColor, textTitleColor} from "../../constants/defaultValues";
 import { useMediaQuery } from 'react-responsive'
 import DashMain from "./Dashboard/Main"
+import {verifSession} from "../../tools/functions";
 
 const menu_items = [
     /*{
@@ -73,12 +74,23 @@ export default function Main(props) {
     const isBigScreen = useMediaQuery({ query: '(min-width: 1000px)' })
 
 
+    useEffect(() => {
 
-
-
-    const verifSession = () => {
-        return !(localStorage.getItem("usrtoken") === null || localStorage.getItem("usrtoken") === undefined || parseInt(localStorage.getItem("exp")) < moment().unix());
-    }
+        if(verifSession() === false){
+            console.log(props)
+            if(props.location && props.location.pathname && props.location.pathname !== "" ){
+                if(props.location && props.location.hash !== "" && props.location.hash.length > 10){
+                    localStorage.setItem("user_url",props.location.pathname + props.location.hash )
+                    props.history.push("/login")
+                }else{
+                    localStorage.setItem("user_url",props.location.pathname)
+                    props.history.push("/login")
+                }
+            }else{
+                props.history.push("/login")
+            }
+        }
+    }, []);
 
 
 
@@ -168,6 +180,8 @@ export default function Main(props) {
                                                       localStorage.removeItem("exp")
                                                       localStorage.removeItem("id")
                                                       localStorage.removeItem("id_conn")
+                                                      localStorage.removeItem("cmd")
+                                                      localStorage.removeItem("user_url")
                                                       window.location.reload()
                                                   })}
                                     >Déconnexion</DropdownItem>
