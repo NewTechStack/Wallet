@@ -187,7 +187,7 @@ class Contract(W3):
             ).run())
         return [True, transactions, None]
 
-    def exec_function(self, name, kwargs, wait=True):
+    def exec_function(self, name, kwargs, wait=True, sender=None):
         keep_function = None
         for function in self.abi:
             if 'type' in function and function['type'] == 'function':
@@ -207,7 +207,7 @@ class Contract(W3):
         if keep_function['stateMutability'] == 'view':
             return [True, self.hextojson({'result': transaction.call()}), None]
         owner = self.owner()
-        return self.execute_transaction(transaction, owner.address, owner.key, wait=wait)
+        return self.execute_transaction(transaction, owner.address, owner.key, wait=wait, sender=sender)
 
     def get_constructor(self):
         constructor = [i for i in self.abi if 'type' in i and i['type'] == 'constructor']

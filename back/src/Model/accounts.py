@@ -140,7 +140,10 @@ def contract_exec_function(cn, nextc):
     err = check.contain(cn.pr, ["kwargs"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
-    err = cn.private['contract'].exec_function(name, cn.pr["kwargs"])
+    sender = None
+    if 'from_user_wallet' in cmd and cmd['from_user_wallet'] is True:
+        sender = cn.private['account'].get_all(anon=False)[1].get('wallets', []).get(0, None)
+    err = cn.private['contract'].exec_function(name, cn.pr["kwargs"], sender=sender)
     return cn.call_next(nextc, err)
 
 def contract(cn, nextc):
