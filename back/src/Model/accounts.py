@@ -143,7 +143,7 @@ def contract_exec_function(cn, nextc):
     sender = None
     if 'from_user_wallet' in cn.pr and cn.pr['from_user_wallet'] is True:
         sender = cn.private['account'].get_all(anon=False)[1].get('wallets', [])
-        sender = sender[0] if len(sender > 0) else None
+        sender = sender[0] if len(sender) > 0 else None
     err = cn.private['contract'].exec_function(name, cn.pr["kwargs"], sender=sender)
     return cn.call_next(nextc, err)
 
@@ -164,7 +164,7 @@ def contract_cmd(cn, nextc):
         sender = None
         if 'from_user_wallet' in cmd and cmd['from_user_wallet'] is True:
             sender = cn.private['account'].get_all(anon=False)[1].get('wallets', [])
-            sender = sender[0] if len(sender > 0) else None
+            sender = sender[0] if len(sender) > 0 else None
         ret.append(cn.private['contract'].exec_function(cmd["name"], cmd["kwargs"], wait=False, sender=sender))
         print(ret)
     err = [True, {'contract': {'address': cn.private['contract'].address, 'id': cn.private['contract'].id} , 'cmd': ret}, None]
