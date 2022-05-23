@@ -93,6 +93,7 @@ class W3:
         gas_price = self.link.toWei(g_price, 'gwei') * mult_gas
         if wallet != owner:
             tx = {
+                'chainId': self.link.eth.chain_id,
                 'nonce': self.link.eth.getTransactionCount(owner['address'], "pending"),
                 'to': wallet['address'],
                 'value': self.link.toWei(gas_cost * gas_price, 'ether'),
