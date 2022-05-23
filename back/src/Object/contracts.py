@@ -160,6 +160,7 @@ class Contract(W3):
     def __init__(self, address, network_type = None, network = None):
         super().__init__(network_type = network_type, network = network)
         self.address = None
+        self.id = None
         try:
             self.address = self.link.toChecksumAddress(address)
         except:
@@ -266,6 +267,7 @@ class Contract(W3):
         }
         res = dict(self.red.insert([data]).run())
         id = res["generated_keys"][0]
+        self.id = id
         return [True, {"id": id} , None]
 
     def get_contract(self, id, expand):
@@ -293,6 +295,7 @@ class Contract(W3):
         address = contract['address']
         network_type = contract['network_type']
         network = contract['network']
+        self.id = id
         return [True, ERCX(address, abi, bytecode, network_type, network), None]
 
 class ERCX(Contract):

@@ -165,7 +165,7 @@ def contract_cmd(cn, nextc):
             sender = cn.private['account'].get_all(anon=False)[1].get('wallets', []).get(0, None)
         ret.append(cn.private['contract'].exec_function(cmd["name"], cmd["kwargs"], wait=False, sender=sender))
         print(ret)
-    err = [True, {'contract': cn.private['contract'].address, 'cmd': ret}, None]
+    err = [True, {'contract': {'address': cn.private['contract'].address, 'id': cn.private['contract'].id} , 'cmd': ret}, None]
     return cn.call_next(nextc, err)
 
 def email_to_address(cn, nextc):
