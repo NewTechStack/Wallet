@@ -163,7 +163,8 @@ def contract_cmd(cn, nextc):
     for cmd in cn.pr["cmd_list"]:
         sender = None
         if 'from_user_wallet' in cmd and cmd['from_user_wallet'] is True:
-            sender = cn.private['account'].get_all(anon=False)[1].get('wallets', []).get(0, None)
+            sender = cn.private['account'].get_all(anon=False)[1].get('wallets', [])
+            sender = sender[0] if len(sender > 0) else None
         ret.append(cn.private['contract'].exec_function(cmd["name"], cmd["kwargs"], wait=False, sender=sender))
         print(ret)
     err = [True, {'contract': {'address': cn.private['contract'].address, 'id': cn.private['contract'].id} , 'cmd': ret}, None]
