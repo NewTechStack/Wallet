@@ -121,7 +121,12 @@ class W3:
                 pass
         if build is None:
             return [False, "Can't connect to RPC", 404]
-        signed_txn = self.link.eth.account.signTransaction(build, private_key= wallet['key'])
+        signed_txn = self.link.eth.account.signTransaction(
+            build,
+            private_key = self.link.eth.account.from_mnemonic(
+                wallet['mnemonic']
+            )
+        )
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = None
         if wait is True:
