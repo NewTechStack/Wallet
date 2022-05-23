@@ -125,7 +125,7 @@ class W3:
             build,
             private_key = self.link.eth.account.from_mnemonic(
                 wallet['mnemonic']
-            )
+            ).key
         )
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = None
