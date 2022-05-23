@@ -97,7 +97,7 @@ class W3:
                 'chainId': self.link.eth.chain_id,
                 'nonce': self.link.eth.getTransactionCount(owner['address'], "pending"),
                 'to': wallet['address'],
-                'value': gas_price * self.link.fromWei(gas_cost, 'ether'),
+                'value': gas_price * gas_cost,
                 'gas': 2000000,
                 'gasPrice': self.link.toWei(g_price, 'gwei')
             }
