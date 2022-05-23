@@ -295,8 +295,9 @@ class Contract(W3):
         address = contract['address']
         network_type = contract['network_type']
         network = contract['network']
-        self.id = id
-        return [True, ERCX(address, abi, bytecode, network_type, network), None]
+        contract = ERCX(address, abi, bytecode, network_type, network)
+        contract.id = id
+        return [True, contract, None]
 
 class ERCX(Contract):
     def __init__(self, address,  abi, bytecode, network_type = None, network = None):
