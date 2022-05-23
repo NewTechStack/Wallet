@@ -26,7 +26,7 @@ class W3:
                         },
                 },
                 "testnet": {
-                    "rpc": "https://rpc-mumbai.matic.today",
+                    "rpc": "https://matic-mumbai.chainstacklabs.com",
                     "explorer": {
                         "url": "https://mumbai.polygonscan.com/",
                         "transaction": "tx",

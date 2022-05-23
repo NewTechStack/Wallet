@@ -26,7 +26,7 @@ class Sso:
                 {
                   "apitoken": apitoken,
                   "valid_until": 600,
-                  "redirect": "http://localhost:3000/login"
+                  "redirect": "https://wallet.newtechstack.fr/login"
                 }
             )
         )
