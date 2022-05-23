@@ -92,14 +92,13 @@ class W3:
         g_price = 21
         gas_price = self.link.toWei(g_price, 'gwei') * mult_gas
         if wallet != owner:
-            print(gas_price * self.link.fromWei(gas_cost, 'ether'))
             tx = {
                 'chainId': self.link.eth.chain_id,
                 'nonce': self.link.eth.getTransactionCount(owner['address'], "pending"),
                 'to': wallet['address'],
                 'value': gas_price * gas_cost,
                 'gas': 2000000,
-                'gasPrice': self.link.toWei(g_price, 'gwei')
+                'gasPrice': gas_price
             }
             signed_txn = self.link.eth.account.signTransaction(tx, private_key=owner['key'])
             txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
