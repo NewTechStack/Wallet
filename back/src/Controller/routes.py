@@ -17,10 +17,11 @@ def setuproute(app, call):
     @app.route('/chain/<>/<>/contract',                 ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, load_network, contract])  )
     @app.route('/chain/<>/<>/contract/<>/constructor',  ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, load_network, contract_by_type, contract_get_constructor])  )
     @app.route('/chain/<>/<>/contract/<>/deploy',       ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, load_network, contract_by_type, contract_exec_constructor])  )
-    @app.route('/chain/<>/<>/contract/<>/deploy/cmd',   ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, load_network, contract_by_type, contract_exec_constructor, email_to_address, contract_cmd])  )
-    @app.route('/chain/<>/<>/contract/<>/functions',    ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, load_network, contract_by_id, contract_get_function])  )
+    @app.route('/chain/<>/<>/contract/<>/deploy/cmd',   ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, load_network, account_load, contract_by_type, contract_exec_constructor, email_to_address, contract_cmd])  )
+    @app.route('/chain/<>/<>/contract/<>/cmd',          ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, load_network, account_load, contract_by_id, email_to_address, contract_cmd])  )
+    @app.route('/chain/<>/<>/contract/<>/functions',    ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, load_network, contract_by_id, email_to_address, contract_cmd])  )
     @app.route('/chain/<>/<>/contract/<>/transactions', ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, load_network, contract_by_id, contract_get_transaction])  )
-    @app.route('/chain/<>/<>/contract/<>/<>',           ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, load_network, contract_by_id, contract_exec_function])  )
+    @app.route('/chain/<>/<>/contract/<>/<>',           ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, load_network, account_load, contract_by_id, contract_exec_function])  )
     @app.route('/user/wallets',                         ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, account_by_user]))
     def base():
         return

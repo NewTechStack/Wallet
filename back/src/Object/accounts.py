@@ -41,7 +41,7 @@ class Account(W3):
         id = res["generated_keys"][0]
         return [True, {"id": id, "address": str(acct.address), "mnemonic": str(mnem)} , None]
 
-    def get_all(self, usr_id = None):
+    def get_all(self, usr_id = None, anon = True):
         usr_id = usr_id if usr_id is not None else self.usr_id
         wallets = list(self.red.filter(
                 (r.row["usr_id"] == usr_id)
@@ -49,11 +49,12 @@ class Account(W3):
         i = 0
         if len(wallets) == 0:
             self.create('base', usr_id)
-            return self.get_all(usr_id)
-        while i < len(wallets):
-            del wallets[i]['mnemonic']
-            del wallets[i]['key']
-            i += 1
+            return self.get_all(usr_id, anon=anon)
+        if anon is True:
+            while i < len(wallets):
+                del wallets[i]['mnemonic']
+                del wallets[i]['key']
+                i += 1
         return [True, {'wallets': wallets}, None]
 
     def wallet_from_id(self, id):

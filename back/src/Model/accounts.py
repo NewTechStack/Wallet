@@ -157,7 +157,10 @@ def contract_cmd(cn, nextc):
     ret = []
     print(cn.pr)
     for cmd in cn.pr["cmd_list"]:
-        ret.append(cn.private['contract'].exec_function(cmd["name"], cmd["kwargs"], wait=False))
+        sender = None
+        if 'from_user_wallet' in cmd and cmd['from_user_wallet'] is True:
+            sender = cn.private['account'].get_all(anon=False)[1].get('wallets', []).get(0, None)
+        ret.append(cn.private['contract'].exec_function(cmd["name"], cmd["kwargs"], wait=False, sender=sender))
         print(ret)
     err = [True, {'return': ret}, None]
     return cn.call_next(nextc, err)

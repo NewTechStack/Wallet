@@ -68,31 +68,58 @@ class W3:
         self.unit = 'ETH' if self.network_type == 'ether' else 'MATIC' if self.network_type == 'polygon' else ''
         return [True, f"Connected to {provider}", None]
 
-    def execute_transaction(self, transaction, owner_address, owner_key, mult_gas = 2, wait = True):
+    def execute_transaction(self, transaction, owner_address, owner_key, mult_gas = 2, wait = True, sender=None):
         gas_cost = None
+        owner = {
+            "address": owner_address,
+            "key": owner_key
+        }
+        wallet = owner if sender is None else sender
+        print(wallet)
+
+        if not 'address' in wallet or not 'key' in wallet:
+            print(wallet)
+            return [False, "Invalid wallet", 500]
         for _ in range(10):
             try:
-                gas_cost = transaction.estimateGas({'from': owner_address})
+                gas_cost = transaction.estimateGas({'from': wallet['address']})
                 break
             except exceptions.ContractLogicError:
                 pass
         if gas_cost is None:
             return [False, "Invalid logic", 400]
         build = None
-        gas_price = self.link.toWei(21, 'gwei') * mult_gas
+        g_price = 21
+        gas_price = self.link.toWei(g_price, 'gwei') * mult_gas
+        if wallet != owner:
+            tx = {
+                'nonce': self.link.eth.getTransactionCount(owner['address'], "pending"),
+                'to': wallet['address'],
+                'value': self.link.toWei(gas_cost * gas_price, 'ether'),
+                'gas': 2000000,
+                'gasPrice': self.link.toWei(g_price, 'gwei')
+            }
+            signed_txn = self.link.eth.account.signTransaction(tx, private_key=owner['key'])
+            txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
+            for _ in range(10):
+                try:
+                    print(self.link.eth.waitForTransactionReceipt(txn))
+                    break
+                except exceptions.TimeExhausted:
+                    pass
         for _ in range(10):
             try:
                 build = transaction.buildTransaction({
-                  'from': owner_address,
+                  'from': wallet['address'],
                   'gas': gas_cost,
                   'gasPrice': gas_price,
-                  'nonce': self.link.eth.getTransactionCount(owner_address, "pending")
+                  'nonce': self.link.eth.getTransactionCount(wallet['address'], "pending")
                 })
             except requests.exceptions.HTTPError:
                 pass
         if build is None:
             return [False, "Can't connect to RPC", 404]
-        signed_txn = self.link.eth.account.signTransaction(build, private_key=owner_key)
+        signed_txn = self.link.eth.account.signTransaction(build, private_key= wallet['key'])
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = None
         if wait is True:
