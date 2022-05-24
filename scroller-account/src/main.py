@@ -74,6 +74,8 @@ class Scroller:
                 pass
 
     def check_address(self, link, address):
+        name = 'balanceOf'
+        kwargs = {'account': address, 'owner': address}
         for contract_address in self.contract_list:
             contract = list(self.contracts.filter((r.row["address"] == contract_address)).run())
             if len(contract) > 0:
@@ -85,7 +87,7 @@ class Scroller:
             if keep_function is None:
                 return [False, "Invalid function name"]
             elem_kwargs = []
-            kwargs = {'account': address, 'owner': address}
+
             for elem in keep_function['inputs']:
                 elem_name = elem['name']
                 elem_type = elem['type']
@@ -93,7 +95,7 @@ class Scroller:
                 if elem_name not in kwargs:
                     return [False, f"missing {elem_name}:{elem_type}"]
             contract = link[0].eth.contract(contract_address, abi=abi)
-            transaction = contract.get_function_by_name('balanceOf')(**{name: kwargs[name] for name in elem_kwargs})
+            transaction = contract.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
             return [True, transaction.call()]
 
     def start(self):
