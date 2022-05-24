@@ -47,7 +47,7 @@ class Scroller:
     def __init__(self):
         self.w3 = {
             "polygon": {
-                "mainnet": "https://polygon-r(pc.com",
+                "mainnet": "https://polygon-rpc.com",
                 "testnet": "https://rpc-mumbai.matic.today"
             },
             "ether": {
@@ -77,9 +77,14 @@ class Scroller:
         name = 'balanceOf'
         kwargs = {'account': address, 'owner': address}
         for contract_address in self.contract_list:
-            contract = list(self.contracts.filter((r.row["address"] == contract_address)).run())
-            if len(contract) > 0:
-                abi = contract[0]['deployment_infos']['abi']
+            contract = list(self.contracts.filter(
+                    (r.row['network'] == link[3])
+                    & (r.row['network_type'] == link[2])
+                    & (r.row["address"] == contract_address)
+                ).run())
+            if len(contract) == 0:
+                continue
+            abi = contract[0]['deployment_infos']['abi']
             for function in abi:
                 if 'type' in function and function['type'] == 'function':
                     if 'name' in function and function['name'] == name:
