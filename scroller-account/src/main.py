@@ -70,7 +70,6 @@ class Scroller:
                 self.contract_user = get_conn().db("wallet").table('contract_user')
                 self.address_list = [account['address'] for account in list(self.accounts.with_fields('address').run())]
                 self.contract_list = [contract['address'] for contract in list(self.contracts.with_fields('address').run())]
-                print(link(self.contract_user.run()))
                 break
             except:
                 pass
@@ -137,6 +136,7 @@ class Scroller:
             loop_number = loop_number + 1 if loop_number < 99999 else 1
             print('Connection to Database')
             self.init_db()
+            print(list(self.contract_user.run()))
             print('Connected to Database')
             print(f"Starting loop {str(loop_number).rjust(5, '0')}")
             for address in self.address_list:
