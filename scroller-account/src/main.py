@@ -117,7 +117,7 @@ class Scroller:
             for address in self.address_list:
                 for link in self.c:
                     i = 0
-                    print(f"[{str(chain_id).ljust(10)}]: {address}")
+
                     while True and i < 3:
                         chain_id = None
                         try:
@@ -125,6 +125,7 @@ class Scroller:
                         except:
                             pass
                         if chain_id is not None:
+                            print(f"[{str(chain_id).ljust(10)}]: {address}")
                             ret = self.check_address(link, address, chain_id)
                             if ret[0] is True:
                                 break
