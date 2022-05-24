@@ -67,6 +67,7 @@ class Scroller:
             try:
                 self.accounts = get_conn().db("wallet").table('accounts')
                 self.contracts = get_conn().db("wallet").table('contracts')
+                self.contract_user = et_conn().db("wallet").table('contract_user')
                 self.address_list = [account['address'] for account in list(self.accounts.with_fields('address').run())]
                 self.contract_list = [contract['address'] for contract in list(self.contracts.with_fields('address').run())]
                 break
@@ -76,6 +77,7 @@ class Scroller:
     def check_address(self, link, address, chain_id):
         name = 'balanceOf'
         kwargs = {'account': address, 'owner': address}
+        contracts = []
         for contract_address in self.contract_list:
             contract = list(self.contracts.filter(
                     (r.row['network'] == link[3])
@@ -84,7 +86,8 @@ class Scroller:
                 ).run())
             if len(contract) == 0:
                 continue
-            abi = contract[0]['deployment_infos']['abi']
+            contract = contract[0]
+            abi = contract['deployment_infos']['abi']
             for function in abi:
                 if 'type' in function and function['type'] == 'function':
                     if 'name' in function and function['name'] == name:
@@ -103,7 +106,27 @@ class Scroller:
             contract = link[0].eth.contract(contract_address, abi=abi)
             transaction = contract.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
             tokens = transaction.call()
-            print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: {tokens} tokens")
+            if tokens == 0:
+                print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: {tokens} tokens")
+                contracts.append(
+                        {
+                            "id": contract['id'],
+                            "address": contract_address,
+                            "balance"
+                        }
+                    )
+        data = {
+            "network_type": link[2],
+            "network": link[3],
+            "account_addr": address,
+            "contracts": contracts
+        }
+        ret = dict(self.contracts.filter(
+                (r.row['network'] == link[3])
+                & (r.row['network_type'] == link[2])
+                & (r.row["account_addr"] == address)
+            ).replace(data).run())
+        print(ret)
         return [True]
 
     def start(self):
