@@ -94,9 +94,11 @@ class Scroller:
                 elem_kwargs.append(elem['name'])
                 if elem_name not in kwargs:
                     return [False, f"missing {elem_name}:{elem_type}"]
+            print(link[0].isConnected())
             contract = link[0].eth.contract(contract_address, abi=abi)
             transaction = contract.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
-            return [True, transaction.call()]
+            print(transaction.call())
+        return [True]
 
     def start(self):
         loop_number = 0
