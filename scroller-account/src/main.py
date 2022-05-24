@@ -115,18 +115,20 @@ class Scroller:
                             "balance": tokens
                         }
                     )
-        data = {
-            "network_type": link[2],
-            "network": link[3],
-            "account_addr": address,
-            "contracts": contracts
-        }
-        ret = dict(self.contracts.filter(
-                (r.row['network'] == link[3])
-                & (r.row['network_type'] == link[2])
-                & (r.row["account_addr"] == address)
-            ).replace(data).run())
-        print(ret)
+        if len(contracts) > 0:
+            ret = dict(self.contracts.filter(
+                    (r.row['network'] == link[3])
+                    & (r.row['network_type'] == link[2])
+                    & (r.row["account_addr"] == address)
+                ).replace(
+                    {
+                        "network_type": link[2],
+                        "network": link[3],
+                        "account_addr": address,
+                        "contracts": contracts
+                    }
+                ).run())
+            print(ret)
         return [True]
 
     def start(self):
