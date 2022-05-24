@@ -122,11 +122,11 @@ class Scroller:
                 "account_addr": address,
                 "contracts": contracts
             }
-            exist =self.contract_user.filter(
+            exist = list(self.contract_user.filter(
                     (r.row['network'] == link[3])
                     & (r.row['network_type'] == link[2])
                     & (r.row["account_addr"] == address)
-                ).run()
+                ).run())
             if len(exist) == 0:
                 ret = self.contract_user.insert([data])
             else:
