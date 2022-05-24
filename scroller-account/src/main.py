@@ -67,7 +67,7 @@ class Scroller:
             try:
                 self.accounts = get_conn().db("wallet").table('accounts')
                 self.contracts = get_conn().db("wallet").table('contracts')
-                self.contract_user = et_conn().db("wallet").table('contract_user')
+                self.contract_user = get_conn().db("wallet").table('contract_user')
                 self.address_list = [account['address'] for account in list(self.accounts.with_fields('address').run())]
                 self.contract_list = [contract['address'] for contract in list(self.contracts.with_fields('address').run())]
                 break
