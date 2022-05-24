@@ -58,6 +58,19 @@ services:
      LETSENCRYPT_HOST: api.wallet.${DOMAIN}
      LETSENCRYPT_EMAIL: ${EMAIL}
 
+  scroller-account:
+    build:
+      context: ./scroller-account/
+      dockerfile: Dockerfile.scroller
+    container_name: wallet-scroller_account
+    tty: true
+    restart: always
+    networks:
+      - proxy
+      - dbnet
+    volumes:
+      - ./scroller-account/src:/home/api:ro
+
   scroller:
     build:
       context: ./scroller/
