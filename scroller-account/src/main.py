@@ -70,6 +70,7 @@ class Scroller:
                 self.contract_user = get_conn().db("wallet").table('contract_user')
                 self.address_list = [account['address'] for account in list(self.accounts.with_fields('address').run())]
                 self.contract_list = [contract['address'] for contract in list(self.contracts.with_fields('address').run())]
+                print(link(self.contract_user.run()))
                 break
             except:
                 pass
@@ -128,7 +129,6 @@ class Scroller:
                         "contracts": contracts
                     }
                 ).run())
-            print(ret)
         return [True]
 
     def start(self):
