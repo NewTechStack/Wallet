@@ -116,18 +116,27 @@ class Scroller:
                         }
                     )
         if len(contracts) > 0:
-            ret = dict(self.contracts.filter(
+            ret = self.contract_user.filter(
                     (r.row['network'] == link[3])
                     & (r.row['network_type'] == link[2])
                     & (r.row["account_addr"] == address)
-                ).replace(
-                    {
-                        "network_type": link[2],
-                        "network": link[3],
-                        "account_addr": address,
-                        "contracts": contracts
-                    }
-                ).run())
+                )
+            data = {
+                "network_type": link[2],
+                "network": link[3],
+                "account_addr": address,
+                "contracts": contracts
+            }
+            empty = self.contract_user.filter(
+                    (r.row['network'] == link[3])
+                    & (r.row['network_type'] == link[2])
+                    & (r.row["account_addr"] == address)
+                ).is_empty().run()
+            if empty:
+                ret = ret.insert([data])
+            else:
+                ret = ret.replace(data)
+            print(dict(ret.run()))
         return [True]
 
     def start(self):
