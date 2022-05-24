@@ -112,7 +112,7 @@ class Scroller:
                         {
                             "id": contract['id'],
                             "address": contract_address,
-                            "balance"
+                            "balance": tokens
                         }
                     )
         data = {
