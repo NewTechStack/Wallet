@@ -90,19 +90,20 @@ class Scroller:
                     if 'name' in function and function['name'] == name:
                         keep_function = function
             if keep_function is None:
-                return [False, "Invalid function name"]
+                print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: Invalid function name")
+                continue
             elem_kwargs = []
-
             for elem in keep_function['inputs']:
                 elem_name = elem['name']
                 elem_type = elem['type']
                 elem_kwargs.append(elem['name'])
                 if elem_name not in kwargs:
-                    return [False, f"missing {elem_name}:{elem_type}"]
-            print(link[0].isConnected())
+                    print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: Missing {elem_name}:{elem_type}")
+                    continue
             contract = link[0].eth.contract(contract_address, abi=abi)
             transaction = contract.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
-            print(transaction.call())
+            tokens = transaction.call())
+            print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: {tokens} tokens")
         return [True]
 
     def start(self):
@@ -116,6 +117,7 @@ class Scroller:
             for address in self.address_list:
                 for link in self.c:
                     i = 0
+                    print(f"[{str(chain_id).ljust(10)}]: {address}")
                     while True and i < 3:
                         chain_id = None
                         try:
@@ -123,15 +125,13 @@ class Scroller:
                         except:
                             pass
                         if chain_id is not None:
-                            ret = self.check_address(link, address)
-                            print(ret)
+                            ret = self.check_address(link, address, chain_id)
                             if ret[0] is True:
                                 break
                         i += 1
                     if i == 3:
                         print(f'Passing: [{str(chain_id).ljust(10)}]: {address}')
                         continue
-                    print(f"[{str(chain_id).ljust(10)}]: {address}")
             print('Checked all address, sleeping ... ')
             time.sleep(30)
         return
