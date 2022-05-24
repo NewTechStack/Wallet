@@ -108,13 +108,14 @@ class Scroller:
                 for link in self.c:
                     i = 0
                     while True and i < 3:
-                        try:
-                            ret = check_address(link, address)
-                            print(ret)
-                            if ret[0] is True:
-                                break
-                        except:
-                            pass
+                        # try:
+                        chain_id = link[0].eth.chain_id
+                        ret = check_address(link, address)
+                        print(ret)
+                        if ret[0] is True:
+                            break
+                        # except:
+                        #     pass
                         i += 1
                     if i == 3:
                         print(f'Passing: [{str(chain_id).ljust(10)}]: {address}')
