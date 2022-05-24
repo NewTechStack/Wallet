@@ -21,6 +21,7 @@ class Account(W3):
             self.red = get_conn().db("wallet").table('accounts')
             self.trx = get_conn().db("wallet").table('transactions')
             self.ctr = get_conn().db("wallet").table('contracts')
+            self.ctr_user = get_conn().db("wallet").table('contract_user')
         except:
             self.red = None
 
@@ -114,18 +115,15 @@ class Account(W3):
 
     def tokens(self, account_addr):
         account_addr = self.link.toChecksumAddress(account_addr)
-        contracts = list(self.ctr.filter(
+        contracts = list(self.ctr_user.filter(
             (r.row["network_type"] == self.network_type)
             & (r.row["network"] == self.network)
+            & (r.row["account_addr"])
             ).run())
         ret = {}
-        for contract in contracts:
-            c = Contract('', self.network_type, self.network).internal_get_contract(contract['id'])[1]
-            c.connect()
-            args = {'account': account_addr, 'owner': account_addr}
-            res = c.exec_function('balanceOf', args)
-            if res[1]['result'] > 0:
-                ret[contract['id']] = {'address': contract['address'], 'balance': res[1]['result']}
+        if len(contract) == 1:
+            for contract in contracts['contracts']:
+                ret[contract['id']] = {'address': contract['address'], 'balance': contract['balance']}
         return [True, ret, None]
 
     def __address_from_id(self, wallet_id):

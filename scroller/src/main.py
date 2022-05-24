@@ -8,7 +8,7 @@ from web3.middleware import geth_poa_middleware
 
 from rethinkdb import RethinkDB
 
-dbs = {"wallet": ["accounts", "contracts", "transactions", "transactions_meta"]}
+dbs = {"wallet": ["accounts", "contracts", "transactions", "transactions_meta", "contract_user"]}
 
 def init():
     red = RethinkDB()
