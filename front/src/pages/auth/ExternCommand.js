@@ -46,11 +46,12 @@ export default class ExternCommand extends React.Component{
                         .then( res => {
 
                         if(res.status === 200 && res.succes === true){
+                            localStorage.removeItem("cmd")
                             toast.success("Opération effectuée avec succès !", {
                                 position: toast.POSITION.TOP_CENTER
                             });
                             setTimeout(() => {
-                                window.location.replace(formated_data.redirect)
+                                window.location.replace(formated_data.redirect + "/" + res.data.contract.id + "/" + res.data.contract.address)
                             },5000)
                         }else{
                             this.setState({textError:"Une erreur est survenue, veuillez recharger la page et réessayer"})

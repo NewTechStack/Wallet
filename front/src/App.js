@@ -16,6 +16,7 @@ import 'moment/locale/fr';
 import { ToastContainer } from 'react-toastify';
 import First_Create from "./pages/FirstWallet/First_Create";
 import ExternCommand from "./pages/auth/ExternCommand";
+import ExternContractCommand from "./pages/auth/ExternContractCommand";
 
 
 export default class App extends Component {
@@ -44,7 +45,8 @@ export default class App extends Component {
                         <Route exact path="/create_wallet" component={First_Create}/>
                         <Route path="/main" component={withRouter(Main)}/>
 
-                        <Route path="/command/:cmd" component={ExternCommand}/>
+                        <Route exact path="/command/:cmd" component={ExternCommand}/>
+                        <Route exact path="/command/contract/:contract_cmd" component={ExternContractCommand}/>
                     </Switch>
                 </Router>
 

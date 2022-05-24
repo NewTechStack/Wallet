@@ -457,7 +457,7 @@ export default function All(props) {
                                                         selected_contract_wallet_transactions.map((item,key) => (
                                                             <div key={key} className="row mt-1 mb-1">
                                                                 <div className="col-lg-2">
-                                                                    <h6>{moment(item.date).fromNow()}</h6>
+                                                                    <h6>{moment.utc(item.date).fromNow()}</h6>
                                                                 </div>
                                                                 <div className="col-lg-10">
                                                                     <h6>

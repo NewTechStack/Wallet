@@ -40,7 +40,9 @@ class login extends Component {
 
         console.log(localStorage.getItem("id_conn") )
         console.log(localStorage.getItem("cmd") )
+        console.log(localStorage.getItem("contract_cmd") )
         console.log(localStorage.getItem("user_url") )
+
 
         if(localStorage.getItem("id_conn") && localStorage.getItem("id_conn") !== undefined && localStorage.getItem("id_conn") !== "" ){
 
@@ -60,7 +62,10 @@ class login extends Component {
 
                     if(localStorage.getItem("cmd") && localStorage.getItem("cmd") !== undefined && localStorage.getItem("cmd") !== "" ){
                         this.props.history.push("/command/" + localStorage.getItem("cmd"))
-                    }else if(localStorage.getItem("user_url") && localStorage.getItem("user_url") !== undefined && localStorage.getItem("user_url") !== "" ){
+                    }else if(localStorage.getItem("contract_cmd") && localStorage.getItem("contract_cmd") !== undefined && localStorage.getItem("contract_cmd") !== "" ){
+                        this.props.history.push("/command/contract/" + localStorage.getItem("contract_cmd"))
+                    }
+                    else if(localStorage.getItem("user_url") && localStorage.getItem("user_url") !== undefined && localStorage.getItem("user_url") !== "" ){
                         this.props.history.push(localStorage.getItem("user_url"))
                     }
                     else{
