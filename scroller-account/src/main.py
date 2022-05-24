@@ -102,7 +102,7 @@ class Scroller:
                     continue
             contract = link[0].eth.contract(contract_address, abi=abi)
             transaction = contract.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
-            tokens = transaction.call())
+            tokens = transaction.call()
             print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: {tokens} tokens")
         return [True]
 
