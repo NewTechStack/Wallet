@@ -73,7 +73,7 @@ class Scroller:
             except:
                 pass
 
-    def check_address(self, link, address):
+    def check_address(self, link, address, chain_id):
         name = 'balanceOf'
         kwargs = {'account': address, 'owner': address}
         for contract_address in self.contract_list:
