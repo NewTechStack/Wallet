@@ -103,8 +103,8 @@ class Scroller:
                 if elem_name not in kwargs:
                     print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: Missing {elem_name}:{elem_type}")
                     continue
-            contract = link[0].eth.contract(contract_address, abi=abi)
-            transaction = contract.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
+            contract_link = link[0].eth.contract(contract_address, abi=abi)
+            transaction = contract_link.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
             tokens = transaction.call()
             if tokens == 0:
                 print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: {tokens} tokens")
