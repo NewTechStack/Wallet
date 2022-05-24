@@ -107,7 +107,6 @@ class Scroller:
             transaction = contract_link.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
             tokens = transaction.call()
             if tokens != 0:
-                print(f"[{str(chain_id).ljust(10)}]: {address} : {contract_address}: {tokens} tokens")
                 contracts.append(
                         {
                             "id": contract['id'],
@@ -131,12 +130,11 @@ class Scroller:
                 ret = self.contract_user.insert([data])
             else:
                 data['id'] = exist[0]['id']
-                ret = self.contract_user.filter(
-                        (r.row['network'] == link[3])
-                        & (r.row['network_type'] == link[2])
-                        & (r.row["account_addr"] == address)
-                    ).replace(data)
-            print(dict(ret.run()))
+                self.contract_user.filter(
+                    (r.row['network'] == link[3])
+                    & (r.row['network_type'] == link[2])
+                    & (r.row["account_addr"] == address)
+                ).replace(data)
         return [True]
 
     def start(self):
