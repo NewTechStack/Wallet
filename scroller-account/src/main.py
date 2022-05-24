@@ -114,7 +114,7 @@ class Scroller:
                         except:
                             pass
                         if chain_id is not None:
-                            ret = check_address(link, address)
+                            ret = self.check_address(link, address)
                             print(ret)
                             if ret[0] is True:
                                 break
