@@ -75,6 +75,10 @@ class W3:
             "key": owner_key
         }
         wallet = owner if sender is None else sender
+        if sender is not None:
+            wallet['key'] = self.link.eth.account.from_mnemonic(
+                wallet['mnemonic']
+            ).key
         print(wallet)
 
         if not 'address' in wallet or not 'key' in wallet:
@@ -122,9 +126,7 @@ class W3:
             return [False, "Can't connect to RPC", 404]
         signed_txn = self.link.eth.account.signTransaction(
             build,
-            private_key = self.link.eth.account.from_mnemonic(
-                wallet['mnemonic']
-            ).key
+            private_key = wallet['key']
         )
         txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
         txn_receipt = None
