@@ -121,8 +121,8 @@ class Account(W3):
             & (r.row["account_addr"])
             ).run())
         ret = {}
-        if len(contract) == 1:
-            for contract in contracts['contracts']:
+        if len(contracts) == 1:
+            for contract in contracts[0]['contracts']:
                 ret[contract['id']] = {'address': contract['address'], 'balance': contract['balance']}
         return [True, ret, None]
 

@@ -79,10 +79,7 @@ class W3:
             wallet['key'] = self.link.eth.account.from_mnemonic(
                 wallet['mnemonic']
             ).key
-        print(wallet)
-
         if not 'address' in wallet or not 'key' in wallet:
-            print(wallet)
             return [False, "Invalid wallet", 500]
         for _ in range(10):
             try:
@@ -108,7 +105,7 @@ class W3:
             txn = self.link.eth.sendRawTransaction(signed_txn.rawTransaction).hex()
             for _ in range(10):
                 try:
-                    print(self.link.eth.waitForTransactionReceipt(txn))
+                    self.link.eth.waitForTransactionReceipt(txn)
                     break
                 except exceptions.TimeExhausted:
                     pass

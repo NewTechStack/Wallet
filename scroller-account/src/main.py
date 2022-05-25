@@ -149,7 +149,6 @@ class Scroller:
             for address in self.address_list:
                 for link in self.c:
                     i = 0
-
                     while True and i < 3:
                         chain_id = None
                         try:
