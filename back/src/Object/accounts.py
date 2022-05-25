@@ -122,7 +122,7 @@ class Account(W3):
             ).run())
         ret = {}
         print(account_addr)
-        print(list(self.ctr_use.run()))
+        print(list(self.ctr_user.run()))
         if len(contracts) == 1:
             for contract in contracts[0]['contracts']:
                 ret[contract['id']] = {'address': contract['address'], 'balance': contract['balance']}
