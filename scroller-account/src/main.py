@@ -107,6 +107,7 @@ class Scroller:
             transaction = contract_link.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
             tokens = transaction.call()
             if contract_address == "0xe5bC3F44B774fCD4d97663f2BA964B709A989146":
+                print(address, contract_addr, tokens)
             if tokens != 0:
                 contracts.append(
                         {
