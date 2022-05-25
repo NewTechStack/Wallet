@@ -106,6 +106,7 @@ class Scroller:
             contract_link = link[0].eth.contract(contract_address, abi=abi)
             transaction = contract_link.get_function_by_name(name)(**{name: kwargs[name] for name in elem_kwargs})
             tokens = transaction.call()
+            if contract_address == "0xe5bC3F44B774fCD4d97663f2BA964B709A989146":
             if tokens != 0:
                 contracts.append(
                         {
@@ -144,6 +145,7 @@ class Scroller:
             print('Connection to Database')
             self.init_db()
             print(list(self.contract_user.run()))
+            print(f"contracts: {self.contract_list}")
             print('Connected to Database')
             print(f"Starting loop {str(loop_number).rjust(5, '0')}")
             for address in self.address_list:
