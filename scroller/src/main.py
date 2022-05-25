@@ -150,7 +150,7 @@ class Scroller:
                     if recei in self.contract_list:
                         data['status'] = self.define_in_ou(data['transaction']['input_clear'], addr)
                     self.transactions.insert(data).run()
-                    if int_t is not None and out_t is not None:
+                    if in_t is not None and out_t is not None:
                         data['address'] = out_t
                         data['status'] = 'out'
                         self.transactions.insert(data).run()
