@@ -151,6 +151,8 @@ class W3:
                 if isinstance(obj, bytes):
                     return [obj.decode("utf-8", errors='ignore'), str(obj)]
                 return super().default(obj)
+        if isinstance(data, int):
+            return data 
         return json.loads(json.dumps(dict(data), cls=HexJsonEncoder))
 
     def owner(self):
