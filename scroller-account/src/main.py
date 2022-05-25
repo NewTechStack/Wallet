@@ -116,6 +116,10 @@ class Scroller:
                             "balance": tokens
                         }
                     )
+                if contract_address == "0xe5bC3F44B774fCD4d97663f2BA964B709A989146":
+                    print(contracts)
+        if address == "0x8c3f4690A127a25004C4109634C2BA6c193A9783":
+            print(contracts)
         if len(contracts) > 0:
             data = {
                 "network_type": link[2],
@@ -123,6 +127,8 @@ class Scroller:
                 "account_addr": address,
                 "contracts": contracts
             }
+            if address == "0x8c3f4690A127a25004C4109634C2BA6c193A9783":
+                print(data)
             exist = list(self.contract_user.filter(
                     (r.row['network'] == link[3])
                     & (r.row['network_type'] == link[2])
@@ -132,11 +138,13 @@ class Scroller:
                 ret = self.contract_user.insert([data])
             else:
                 data['id'] = exist[0]['id']
-                self.contract_user.filter(
+                ret = self.contract_user.filter(
                     (r.row['network'] == link[3])
                     & (r.row['network_type'] == link[2])
                     & (r.row["account_addr"] == address)
                 ).replace(data)
+            if address == "0x8c3f4690A127a25004C4109634C2BA6c193A9783":
+                print(dict(ret))
         return [True]
 
     def start(self):
