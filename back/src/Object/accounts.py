@@ -118,9 +118,10 @@ class Account(W3):
         contracts = list(self.ctr_user.filter(
             (r.row["network_type"] == self.network_type)
             & (r.row["network"] == self.network)
-            & (r.row["account_addr"])
+            & (r.row["account_addr"] == account_addr)
             ).run())
         ret = {}
+        print(contracts)
         if len(contracts) == 1:
             for contract in contracts[0]['contracts']:
                 ret[contract['id']] = {'address': contract['address'], 'balance': contract['balance']}
