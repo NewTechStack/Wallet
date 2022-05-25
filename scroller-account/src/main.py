@@ -145,8 +145,8 @@ class Scroller:
             loop_number = loop_number + 1 if loop_number < 99999 else 1
             print('Connection to Database')
             self.init_db()
-            print(list(self.contract_user.run()))
-            print(f"contracts: {self.contract_list}")
+            # print(list(self.contract_user.run()))
+            # print(f"contracts: {self.contract_list}")
             print('Connected to Database')
             print(f"Starting loop {str(loop_number).rjust(5, '0')}")
             for address in self.address_list:
