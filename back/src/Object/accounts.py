@@ -122,20 +122,20 @@ class Account(W3):
             ).run())
         ret = {}
         if len(contracts) == 1:
-            contract_data = dict(self.ctr.get(contract['id']))
-            additionnal_data = {}
-            abi = contract_data['deployment_infos']['abi']
-            contract = self.link.eth.contract(contract['address'], abi=abi)
-            for function in abi:
-                if 'type' in function and function['type'] == 'function':
-                    if 'name' in function \
-                        and 'stateMutability' in function \
-                        and function['stateMutability'] == 'view' \
-                        and 'inputs' in function \
-                        and len(function['inputs']) == 0:
-                            transaction = contract.get_function_by_name(function['name'])()
-                            additionnal_data[function['name']] = self.hextojson(transaction.call())
             for contract in contracts[0]['contracts']:
+                contract_data = dict(self.ctr.get(contract['id']))
+                additionnal_data = {}
+                abi = contract_data['deployment_infos']['abi']
+                contract = self.link.eth.contract(contract['address'], abi=abi)
+                for function in abi:
+                    if 'type' in function and function['type'] == 'function':
+                        if 'name' in function \
+                            and 'stateMutability' in function \
+                            and function['stateMutability'] == 'view' \
+                            and 'inputs' in function \
+                            and len(function['inputs']) == 0:
+                                transaction = contract.get_function_by_name(function['name'])()
+                                additionnal_data[function['name']] = self.hextojson(transaction.call())
                 ret[contract['id']] = {
                     'address': contract['address'],
                     'balance': contract['balance'],
