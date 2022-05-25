@@ -153,6 +153,7 @@ class Scroller:
                     if int_t is not None and out_t is not None:
                         data['address'] = out_t
                         data['status'] = 'out'
+                        self.transactions.insert(data).run()
             in_t =  recei if  recei in self.contract_list else None
             out_t = expe if expe in self.contract_list else None
             if in_t is not None or out_t is not None:
@@ -200,11 +201,11 @@ class Scroller:
 
     def start(self):
         loop_number = 0
+        print('Connection to Database')
+        self.init_db()
+        print('Connected to Database')
         while True:
             loop_number = loop_number + 1 if loop_number < 99999 else 1
-            print('Connection to Database')
-            self.init_db()
-            print('Connected to Database')
             print(f"Starting loop {str(loop_number).rjust(5, '0')}")
             for link in self.c:
                 i = 0
@@ -228,6 +229,7 @@ class Scroller:
                 print(f"[{str(chain_id).ljust(10)}]: from {str(lastchecked).rjust(10, '0')} to {str(latest).rjust(10, '0')}")
                 while lastchecked < latest:
                     lastchecked += 1
+                    self.init_db()
                     ret = self.checkblock(link, lastchecked, chain_id)
                     if ret is False:
                         lastchecked -= 1
