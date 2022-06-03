@@ -2,6 +2,7 @@ from Controller.basic import check
 from Object.utils import Utils
 from Object.accounts import Account
 from Object.contracts import *
+from Object.sso import Sso
 
 def chains(cn, nextc):
     err = [True, W3().networks, None]
@@ -38,7 +39,7 @@ def account_by_user(cn, nextc):
     err = check.contain(cn.pr, ["email"])
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
-    err = cn.private["sso"].user_by_email(cn.pr['email'])
+    err = Sso().user_by_email(cn.pr['email'])
     Acc = Account(err[1]['id'])
     wallets = Acc.get_all()[1]['wallets']
     if len(wallets) == 0:

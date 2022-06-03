@@ -23,7 +23,7 @@ def setuproute(app, call):
     @app.route('/chain/<>/<>/contract/<>/transactions', ['OPTIONS', 'GET'],           lambda x = None: call([sso_verify_token, load_network, contract_by_id, contract_get_transaction])  )
     @app.route('/chain/<>/<>/contract/<>/<>',           ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, load_network, account_load, contract_by_id, email_to_address, contract_exec_function])  )
     @app.route('/contract/<>',                          ['OPTIONS', 'DELETE'],        lambda x = None: call([sso_verify_token, load_network, contract_delete_by_id])  )
-    @app.route('/user/wallets',                         ['OPTIONS', 'POST'],          lambda x = None: call([sso_verify_token, account_by_user]))
+    @app.route('/user/wallets',                         ['OPTIONS', 'POST'],          lambda x = None: call([account_by_user]))
     def base():
         return
 
