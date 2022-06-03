@@ -100,6 +100,11 @@ def contract_by_type(cn, nextc):
     err = [True, {}, None]
     return cn.call_next(nextc, err)
 
+def contract_delete_by_id(cn, nextc):
+    contract = str(cn.rt.get('contract'))
+    err = Contract(' ', cn.private['network_type'], cn.private['network']).internal_get_contract(contract)
+    return cn.call_next(nextc, err)
+
 def contract_by_id(cn, nextc):
     contract = str(cn.rt.get('contract'))
     err = Contract(' ', cn.private['network_type'], cn.private['network']).internal_get_contract(contract)

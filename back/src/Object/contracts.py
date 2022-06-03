@@ -291,6 +291,10 @@ class Contract(W3):
                 del contract['deployment_infos']['log']
         return [True, contracts, None]
 
+    def delete(self, id):
+        contract = dict(self.red.get(id).delete().run())
+        return [True, contract, None]
+
     def internal_get_contract(self, id):
         contract = self.red.get(id).run()
         if contract is None:
