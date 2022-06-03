@@ -96,6 +96,7 @@ services:
     command: rethinkdb --bind all -d /data
     networks:
       - dbnet
+      - proxy
     environment:
      VIRTUAL_HOST: db.wallet.${DOMAIN}
      VIRTUAL_PORT: 8080

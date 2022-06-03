@@ -123,7 +123,10 @@ class Account(W3):
         ret = {}
         if len(contracts) == 1:
             for contract in contracts[0]['contracts']:
-                contract_data = dict(self.ctr.get(contract['id']).run())
+                contract_data = self.ctr.get(contract['id']).run()
+                if contract_data is None:
+                    continue
+                contract_data = dict(contract_data)
                 additionnal_data = {}
                 abi = contract_data['deployment_infos']['abi']
                 contract_obj = self.link.eth.contract(contract['address'], abi=abi)
