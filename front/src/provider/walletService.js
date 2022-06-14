@@ -132,6 +132,15 @@ let WalletService ={
         });
     },
 
+    deleteContract(contract_id,usrtoken){
+        return fetch(endpoint+'/contract/' + contract_id, {
+            method: 'DELETE',
+            headers:this.loadHeadersToken(usrtoken),
+        }).then(response => response.json()).catch(error => {
+            console.log(error);
+        });
+    },
+
 }
 
 

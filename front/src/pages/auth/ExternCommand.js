@@ -9,6 +9,7 @@ import empty_icon from "../../assets/icons/empty_icon2.png"
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {toast} from 'react-toastify';
 import WalletService from "../../provider/walletService";
+import walletService from "../../provider/walletService";
 
 
 export default class ExternCommand extends React.Component{
@@ -20,7 +21,7 @@ export default class ExternCommand extends React.Component{
         textError:null
     }
 
-    componentDidMount() {
+    async componentDidMount() {
 
 
 
@@ -39,6 +40,10 @@ export default class ExternCommand extends React.Component{
                 console.log(formated_data)
                 this.setState({firstLoading:false,error:false,data:formated_data})
 
+
+                if(formated_data.delete_contract && formated_data.delete_contract !== ""){
+                    await this.deleteContract(formated_data.delete_contract,localStorage.getItem("usrtoken"))
+                }
 
                 if(formated_data.chain && formated_data.cmd_list && formated_data.kwargs){
 
@@ -90,6 +95,21 @@ export default class ExternCommand extends React.Component{
     }
 
 
+    deleteContract(id,token){
+        return new Promise(resolve => {
+
+            walletService.deleteContract(id,token).then( deleteRes => {
+                if(deleteRes.status === 200 && deleteRes.succes === true){
+                    resolve("true")
+                }else{
+                    resolve("false")
+                }
+            }).catch(err => {
+                resolve("false")
+            })
+
+        })
+    }
 
     render() {
         return(

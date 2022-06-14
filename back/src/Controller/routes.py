@@ -26,7 +26,3 @@ def setuproute(app, call):
     @app.route('/user/wallets',                         ['OPTIONS', 'POST'],          lambda x = None: call([account_by_user]))
     def base():
         return
-
-
-        context = ssl.SSLContext()
-        context.verify_mode = ssl.CERT_NONE
