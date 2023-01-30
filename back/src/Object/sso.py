@@ -5,8 +5,8 @@ import uuid
 from tinydb import TinyDB, Query
 
 db = TinyDB('/db.json')
-sso_front = "https://sso.rocketbonds.fr"
-sso_back = "https://api.sso.newtechstack.fr"
+sso_front = "https://sso.rocketbonds.me"
+sso_back = "https://api.sso.rocketbonds.me"
 apitoken = "690a9b618c8442f992b7496aa09e2c99"
 registry_id = "ff000fef-2f52-4867-89ad-df534ca600e0"
 
