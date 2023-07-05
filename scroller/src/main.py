@@ -10,30 +10,38 @@ from rethinkdb import RethinkDB
 
 dbs = {"wallet": ["accounts", "contracts", "transactions", "transactions_meta", "contract_user"]}
 
-def init():
+# Function to initialize connection with the RethinkDB instance
+def init(dbs):
+    # Create a RethinkDB instance
     red = RethinkDB()
+
+    # Try connecting to the DB for 10 times, sleep 2 sec between attempts
     for _ in range(10):
         try:
             red.connect("rethink", 28015, password="").repl()
-            red.db_list().run()
             break
         except:
-            continue
-        time.sleep(2)
-    if red is None:
+            time.sleep(2)
+
+    # If after 10 attempts, connection is not established, exit the function
+    if not red.is_connected():
         print("cannot connect to db")
         exit(1)
-    else:
-        db_list = red.db_list().run()
-        if "test" in db_list:
-            red.db_drop("test").run()
-        for i in dbs:
-            if i not in db_list:
-                red.db_create(i).run()
-            for j in dbs[i]:
-                if j not in red.db(i).table_list().run():
-                    red.db(i).table_create(j).run()
-    return red
+
+    # Fetch list of existing databases
+    db_list = red.db_list().run()
+
+    # If 'test' DB exists, drop it
+    if "test" in db_list:
+        red.db_drop("test").run()
+
+    # Create the DBs and tables as per the 'dbs' dictionary
+    for db, tables in dbs.items():
+        if db not in db_list:
+            red.db_create(db).run() # Create DB if it doesn't exist already
+        for table in tables:
+            if table not in red.db(db).table_list().run(): # Create table if it doesn't exist already
+                red.db(db).table_create(table).run()
 
 def get_conn():
     r = RethinkDB()
